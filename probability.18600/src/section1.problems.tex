@@ -1,0 +1,341 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+
+% \begin{document}
+% \newcounter{set}
+% \setcounter{set}{1}
+% \newcounter{problem}[set]
+
+% \newcommand{\problem}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}.\arabic{problem}}\\}
+
+% \problem
+% \textit{Sum-product algorithm:}  Consider the sum-product\ldots.
+
+% \problem
+% \textit{Max-marginals:} Consider the max-marginals\ldots.
+
+% \stepcounter{problem}
+% \problem
+% Demonstraction of \verb"\stepcounter"
+
+% \addtocounter{problem}{-1}
+% \problem
+% \end{document}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+\newcommand{\problem}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1.}
+  \end{flushleft}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+\begin{document}
+\begin{enumerate}
+  \item
+        \begin{enumerate}
+          \item How many different 7-place license plates are possible if the first 2 places
+                are for letters and the other 5 for numbers?
+                \begin{solution} {
+                    as letters/numbers may be repeated, there are $26^{2}(10^{5})$ possible license plates
+                  }
+                \end{solution}
+          \item Repeat part (a) under the assumption that no letter or numbers
+                can be repeated in a single license plate.
+                \begin{solution} {
+                    there are $26 \choose 2$ possibilities for the first 2 places (letters), and
+                    $10 \choose 5$ for the remaining 5 places (numbers).  Thus the answer is
+                    \begin{align*}
+                      \frac{26!}{24!}\frac{10!}{5!}
+                    \end{align*}
+                  }
+                \end{solution}
+        \end{enumerate}
+  \item How many outcome sequences are possible when a die is rolled four times, where
+        we say, for instance, that the outcome is 3, 4, 3, 1 if the first roll landed on 3,
+        the second on 4, the third on 3, and the fourth on 1?
+        \begin{solution} {
+            there are $6^{4}$ possibilities (duh)
+          }
+        \end{solution}
+  \item Twenty workers are to be assigned to 20 different jobs, one to each job.
+        How many different assignments are possible?
+        \begin{solution} {
+            This is simply the number of permutations of the 20 workers, as there
+            is a 1:1 mapping of worker:job.
+            \begin{align*}
+              20!
+            \end{align*}
+          }
+        \end{solution}
+  \item John, Jim, Jay, and Jack have formed a band consisting of 4 instruments.
+        \begin{enumerate}
+          \item If each of the boys can play all 4 instruments, how many different arrangements are possible?
+                \begin{solution} {
+                    If each can play all 4, then the question is identitical to (3).  The answer is
+                    \begin{align*}
+                      4!=24
+                    \end{align*}
+                  }
+                \end{solution}
+          \item What if John and Jim can play all 4 instruments, but Jay and Jack can each play only piano and drums?
+                \begin{solution} {
+                    If only 2 of the players can play all instruments, and the other 2 can play 2 instruments,
+                    the answer does NOT become
+                    \begin{align*}
+                      \frac{4!}{2!}(2!)=4!=24
+                    \end{align*}
+                    This is what I thought at first, but then it occurred to me, that the fact
+                    that 2 of the players can play all 4 instruments is irrelevant if the other
+                    2 players can only play 2 instruments.
+                    The former 2 players MUST play the 2 instruments that the latter 2 can't play.
+                    Therefore, the answer actually becomes
+                    \begin{align*}
+                      2!(2!)=4
+                    \end{align*}
+                  }
+                \end{solution}
+        \end{enumerate}
+  \item For years, telephone area codes in the United States and Canada
+        consisted of a sequence of three digits. The first digit was an integer
+        between 2 and 9, the second digit was either 0 or 1, and the third digit
+        was any integer from 1 to 9.
+        \begin{enumerate}
+          \item How many area codes were possible?
+          \begin{solution} {
+            There were 8 possibilities for the first number, 2 for the second, and 9 for the third.
+            \begin{align*}
+              (8)(2)(9)
+            \end{align*}
+            possibilities altogether.
+          }
+          \end{solution}
+          \item How many area codes starting with a 4 were possible?
+          \begin{solution} {
+            The number of choices for the first digit changes from 8 to 1, leaving
+            \begin{align*}
+              (1)(2)(9)=18
+            \end{align*}
+            possibilities.
+          }
+          \end{solution}
+        \end{enumerate}
+    \item A well-known nursery rhyme starts as follows:
+    \begin{quotation}
+    As I was going to St. Ives\\
+    I met a man with 7 wives.\\
+    Each wife had 7 sacks.\\
+    Each sack had 7 cats.\\
+    Each cat had 7 kittens.\\
+    \end{quotation}
+    How many kittens did the traveler meet?
+    \begin{solution} {
+      Isn't it obvious? $7*7*7*7=7^{4}$
+    }
+    \end{solution}
+    \item
+    \begin{enumerate}
+      \item In how many ways can 3 boys and 3 girls sit in a row?
+      \begin{solution} {
+        It seems the gender is irrelevant to this question.  The more direct question is, "how many ways can 6 people sit together?"
+        \begin{align*}
+          6!
+        \end{align*}
+      }
+      \end{solution}
+      \item In how many ways can 3 boys and 3 girls sit in a row if the boys
+      and the girls are each to sit together?
+      \begin{solution}
+        There are $3!$ ways to arrange the boys amongst themselves, and the same number of ways to arrange the girls amongst themselves.
+        There are also $2!$ ways to position the block of boys and girls relative to each other.
+        \begin{align*}
+          (3!)(3!)=36
+        \end{align*}
+      \end{solution}
+      \item In how many ways if only the boys must sit together?
+      \begin{solution} {
+        The boys can be arranged in $3!$ ways amongst themselves.  Since they must sit together,
+        they collectively act as a 4th person with whom to permute seating arrangements with the 3 girls.
+        Like each individual girl, there are 4 possible positions in which the block of 3 boys can sit.
+        Therefore, there are
+        \begin{align*}
+          (3!)(4!)=144
+        \end{align*}
+        combinations.
+      }
+      \end{solution}
+      \item In how many ways if no two people of the same sex are allowed
+      to sit together?
+      \begin{solution} {
+        A simple way to view the problem, is to fix the girls positions, and then insert the boys between them.
+        2 of the 3 boys must sit between the 1st and 2nd, and 2nd and 3rd girls.
+        The only remaining choice is whether to put the 3rd boy in front of the 1st girl, or after the last one. 
+        So the answer is simply:
+        \begin{align*}
+          (permutations_{girls})(permutations_{boys})(shifts_{boys})=3!(3!)2
+        \end{align*}
+        A more general way to view the problem, is in terms of $n$ children, of which $0<m<n$ are girls.
+        The general solution calls for counting the number of Nonnegative Integer Vector Solutions.
+        \mbox{}\\ \\
+        If the $m$ girls' positions are fixed, there are $m+1$ groups in which to place the $n-m$ boys.
+        The first group represents the position before the first girl, the last group represents
+        the position after the last girl, and the middle groups are each between 2 girls.
+        \mbox{}\\ \\
+        Let $\vec{x}=({x_{1},x_{2},...,x_{m+1}})$ represent the number of boys in each group.
+        Note that the solutions have the following constraints:
+        \begin{align*}
+          &x_{1}\geq 0\\
+          &x_{i}\geq 1~\{i~|~2\leq i \leq m\}\\
+          &x_{m+1}\geq 0
+        \end{align*}
+        With a simple substiution, combinatorial logic can be used to count the number of solutions
+        that satisfy the constraints.  Let
+        \begin{align*}
+          \vec{y}=(x_{1}+1,x_{2},x_{3},...,x_{m},x_{m+1}+1)
+        \end{align*}
+
+        Instead of counting solutions to $\sum{x_{i}}=n-m$, count solutions to $\sum{y_{i}}=n-m+2$.
+        The number of solutions to the latter is
+        \begin{align*}
+          n-m+1 \choose m
+        \end{align*}
+        \mbox{}\\ \\
+        Don't lose sight of the original problem!  Remember, the number of solutions to the equation above
+        does not account for the number of permutations of the girls and boys.  So the count must be multiplied
+        by $(n-m)!(m!)$ to get the right answer.
+        If $num~children=n=6$ and $num~girls=m=3$, then with the general formula, the number of ways in which
+        the children may be seated, such that there are no 2 consecutive children of the same gender, is:
+        \begin{align*}
+          (3!)(3!){4 \choose 3}=(3!)(3!)\frac{4!}{1!(3!)}=(3!)(3!)4
+        \end{align*}
+        Conflabit! What happened? This is the number of ways the children could be arranged so that no 2 \textit{girls} sit next to eachother.
+        However, this model does NOT discount solutions where 2 \textit{boys} sit together.  Hmmm, how to get
+        rid of those pesky solutions in which 2 boys are adjacent...I got it!  We'll just count those solutions,
+        and subtract them from the total.  How hard can that be?  Well, too hard for now!  To be continued...
+      }
+      \end{solution}
+    \end{enumerate}
+    \item When all letters are used, how many different letter arrangements
+    can be made from the following letters:
+    \begin{enumerate}
+      \item Fluke
+      \begin{solution} {
+        $5!=120$ (duh)
+      }
+      \end{solution}
+      \item Propose
+      \begin{solution} {
+        Assume permutations are case-insensitive.  Take the number of
+        permutations of the letters as if they were distinguishable, and divide by
+        the number of permutations of the repeated letters.
+        In this case, each permutation has 2 p's and 2 o's. Therefore, there are
+        2 permutations of o's and 2 permutations of p's per distinguishable permutation.
+        \begin{align*}
+          \frac{7!}{(2!)(2!)}=\frac{7!}{4}=7*6*5*3*2=1260
+        \end{align*}
+      }
+      \end{solution}
+      \item Mississippi
+      \begin{solution} {
+        Wow, okay.  Is there any word in the English language that produces a greater ratio of (total-distinct):total letters?
+        There are 11 letters altogether, a measley one of which is NOT repeated: 4 s's, 4 p's, 2 i's, and 1 sad, lonely M.
+        \begin{align*}
+          \frac{11!}{4!4!2!}=34650
+        \end{align*}
+      }
+      \end{solution}
+      \item Arrange
+      \begin{solution} {
+        \begin{align*}
+          \frac{7!}{2!2!}=1260
+        \end{align*}
+      }
+      \end{solution}
+    \end{enumerate}
+    \item A child has 12 blocks, of which 6 are black, 4 are red, 1 is white, and
+    1 is blue. If the child puts the blocks in a line, how many arrangements
+    are possible?
+    \begin{solution} {
+      This answer can be obtained with the same formula used to count distinct permutations of letters.
+      The letters, and blocks are both symbols.  The number of permutations of a set of symbols is equal to
+      the set size factorial, divided by the number of permutations of repeated symbols.  It could also be
+      viewed as divided by the number of permutations of each symbol in the set. As non-repeated symbols
+      would result in a division by 1, they would not change the count.
+      \begin{align*}
+        \frac{12!}{6!4!}=27720
+      \end{align*}
+    }
+    \end{solution}
+    \item In how many ways can 8 people be seated in a row if
+    \begin{enumerate}
+      \item there are no restrictions on the seating arrangement?
+      \begin{solution} {
+        8!
+      }
+      \end{solution}
+      \item persons A and B must sit next to each other?
+      \begin{solution} {
+        One way to look at this is to consider A and B 1 person, then count the permutations of
+        this slightly smaller set (with one less person), and multiply that result by the number of
+        permutations which A and B could have amongst themselves.
+        \begin{align*}
+          7!2!
+        \end{align*}
+      }
+      \end{solution}
+      \item there are 4 men and 4 women and no 2 men or 2 women can sit
+      next to each other?
+      \begin{solution} {
+        Didn't we do this already?
+        \begin{align*}
+          4!4!2
+        \end{align*}
+      }
+      \end{solution}
+      \item there are 5 men and they must sit next to one another?
+      \begin{solution} {
+        There are $5!$ ways to permute the men amongst themselves, $3!$ ways to permute the women,
+        and 4 positions in which the block of men may be inserted (relative to the women).
+        \begin{align*}
+          5!3!4=2880
+        \end{align*}
+      }
+      \end{solution}
+      \item there are 4 married couples and each couple must sit together?
+      \begin{solution} {
+        There are $4!$ ways to permute the couples independent of their internal arrangements,
+        and of course 2 ways to permute each couple internally, which means $2^4$ internal permutations
+        per permutation of the set of couples.
+        \begin{align*}
+          4!2^4=384
+        \end{align*}
+      }
+      \end{solution}
+    \end{enumerate}
+    \item In how many ways can 3 novels, 2 mathematics books, and 1
+    chemistry book be arranged on a bookshelf if
+\end{enumerate}
+\end{document}

@@ -1,0 +1,525 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{cancel}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{showexpl}
+\usepackage{xparse}
+\usepackage{caption}
+\usepackage{changepage}
+\usepackage{kantlipsum}
+
+\makeatletter
+\newlength\dottedlinefillheight
+\setlength\dottedlinefillheight{.25in}
+
+\def\fillwithdottedlines{%
+  \begingroup
+  \ifhmode
+    \par
+  \fi
+  \hrule height \z@
+  \nobreak
+  \setbox0=\hbox to \hsize{\hskip \@totalleftmargin
+          \vrule height \dottedlinefillheight depth \z@ width \z@
+          \dotfill}%
+  \cleaders \copy0 \vfill \hbox{}%
+  \endgroup
+}
+\makeatother
+
+\title{Probability 18600}
+\date{2020-11-08}
+\renewcommand{\familydefault}{\sfdefault}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\theoremstyle{axiom}
+\newtheorem{axiom}{Axiom}
+
+\theoremstyle{proposition}
+\newtheorem{proposition}{Proposition}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\NewDocumentEnvironment{sidebyside}{O{.50} o +m +m}{%
+  \noindent\begin{minipage}[t][][t]{#1\linewidth}%
+  #3% Content of the first minipage
+  \end{minipage}%
+  \hfill%
+  \noindent\begin{minipage}[t][][t]{\IfValueTF{#2}{#2}{#1}\linewidth}%
+  #4% Content of the second minipage
+  \end{minipage}\\% newline is important, it allows \hfill to work correctly, try removing it ;)
+}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+
+\newcommand{\lnbk}{\mbox{\\ \\ \\}}
+
+\newcommand{\exref}[1]{ (ex \textbf{#1}) }
+
+\newenvironment{propositionenv}[2]{
+  \begin{proposition}
+    \textbf{#1}
+    \begin{adjustwidth}{\exampleIndent}{2pt} {
+      {#2}
+    }
+    \end{adjustwidth}
+  \end{proposition}
+}
+
+\newenvironment{example}[2]{
+  \header{Example #1}
+  \begin{adjustwidth}{\exampleIndent}{2pt} {
+    {#2}
+  }
+  \end{adjustwidth}
+}
+
+\newenvironment{exampleOrig}[2]{
+  \noindent\fbox{
+    \parbox{\textwidth}{
+  \large
+  \textbf{Example #1}
+  \normalsize
+  {#2}
+  }
+  }
+}
+
+\newenvironment{textbox}
+{\begin{center}
+  \begin{tabular}{|p{0.9\textwidth}|}
+    \hline \\
+    }
+    {
+    \\\\\hline
+  \end{tabular}
+\end{center}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+% \newenvironment{proposition}[1] {
+%   \begin{flushleft}
+%   \large
+%   \textbf{Proposition #1}
+%   \end{flushleft}
+% }
+\definecolor{propbg}{RGB}{180,220,255}
+\newenvironment{propositionEnv}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+Introducing \textbf{Conditional Probability}
+\section{Conditional Probabilities}
+
+\begin{definition}
+  Given two events, $E$ and $F$, the probability that $E$ will occur if $F$ \text{has already} occurred
+  is denoted
+  \begin{align}
+    P(E|F)=\frac{P(EF)}{P(F)}~\{P(F)>0\}
+  \end{align}
+  For example, suppose 2 dice are rolled, $d_{1}$ and $d_{2}$.  Suppose $E$ is the event where $d_{1}+d_{2}=8$,
+  and $F$ is the event where $d_{1}=3$.
+  \begin{align*}
+    P(F)   & =\frac{1}{6}                                  \\
+    P(EF)  & =\frac{1}{36}                                 \\
+    P(E|F) & =\frac{\frac{1}{36}}{\frac{1}{6}}=\frac{1}{6}
+  \end{align*}
+  I originally worked a different problem out, and \textit{just discovered} that
+  it is NOT involved in the actual question in the book.
+  Though I thought it was nice work, so I'm going to include it.
+  \mbox{}\\ \\
+  The odds that one particular number between 1 and 6 will appear on
+  \textit{exactly} one of $n$ dice rolls is:
+  \begin{align*}
+    {n \choose 1}\frac{5^{n-1}}{6^n}
+  \end{align*}
+  If one die has the particular number, the rest \textit{must have a different number}.
+  That leaves each of the remaining $n-1$ die with 5 possible outcomes, hence $5^{n-1}$.
+  And there are $n$ different dice on which the particular number could be rolled, hence
+  the $n\choose1$.  The last term, $6^n$ represents the total number of possible outcomes.
+  \mbox{}\\ \\
+  It follows then, that the odds such a particular number will appear on \textit{exactly two}
+  die rolls is:
+  \begin{align*}
+    {n\choose2}\frac{5^{n-2}}{6^n}
+  \end{align*}
+  In general, the odds that a particular number will appear on $m~\{~1\leq m\leq n\}$ die rolls is:
+  \begin{align*}
+    \frac{1}{6^n}\sum_{i=1}^{n}{n\choose i}5^{n-i}
+  \end{align*}
+  Plug in $n=2,~m=2$ to get:
+  \begin{align*}
+    P(F)=\frac{1}{6^2}\left[{2\choose1}5^1+{2\choose2}5^0\right]=\frac{11}{36}
+  \end{align*}
+\end{definition}
+\begin{example}{2a}{
+    Joe is 80 percent certain that his missing key is in one of the two pockets of his
+    hanging jacket, being 40 percent certain it is in the left-hand pocket and
+    percent certain it is in the right-hand pocket. If a search of the left-hand pocket
+    does not find the key, what is the conditional probability that it is in the other
+    pocket?
+  }
+\end{example}
+\begin{solution}{
+    \begin{align*}
+      P(R|L^{c}) & =\frac{P(RL^{c})}{P(R)}=\frac{.40}{.60}=\frac{2}{3}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{2b}{
+    A coin is flipped twice. Assuming that all four points in the sample space
+    $S=\{(h,h),(h,t),(t,h),(t,t)\}$ are equally likely, what is the conditional probability
+    that both flips land on heads, given that:
+    \begin{enumerate}
+      \item the first flip lands on heads?
+            \begin{align*}
+              1\over2
+            \end{align*}
+      \item at least one flip lands on heads?
+            \begin{align*}
+              1\over3
+            \end{align*}
+    \end{enumerate}
+  }
+\end{example}
+\begin{example}{2c} {
+    In the card game bridge, the 52 cards are dealt out equally to 4 players–called
+    East, West, North, and South. If North and South have a total of 8 spades among
+    them, what is the probability that East has 3 of the remaining 5 spades?
+  }
+\end{example}
+\begin{solution} {
+    There are 26 cards left to deal evenly to \textit{East} and \textit{West}, of which 5 are spades.
+    The probability that \textit{West} will receive 3 spades is:
+    \begin{align*}
+      {5\choose3}{21\choose10}\over {26\choose13}
+    \end{align*}
+  }
+\end{solution}
+
+\begin{example}{2d} {
+    Celine is undecided as to whether to take a French course or a chemistry course.
+    She estimates that her probability of receiving an A grade would be $1\over2$ in a French
+    course and $2\over3$ in a chemistry course. If Celine decides to base her decision on the
+    flip of a fair coin, what is the probability that she gets an A in chemistry?
+  }
+\end{example}
+\begin{solution} {
+    There are 4 possible outcomes: Celine 1) gets an A in chemistry, or 2) gets an A in french,
+    or 3) doesn't get an A in chemistry, or 4) doesn't get an A in french.
+    \begin{align*}
+      E_1 & =Chemsitry~A  & P(E_{1}) & =\frac{1}{2}\cdot\frac{2}{3} \\
+      E_2 & =Chemistry~<A & P(E_{2}) & =\frac{1}{2}\cdot\frac{1}{2} \\
+      E_3 & =French~A     & P(E_{3}) & =\frac{1}{2}\cdot\frac{1}{3} \\
+      E_4 & =French~<A    & P(E_{4}) & =\frac{1}{2}\cdot\frac{1}{2}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{2e}{
+    Suppose that an urn contains 8 red balls and 4 white balls. We draw 2 balls from
+    the urn without replacement.
+    \begin{enumerate}
+      \item If we assume that at each draw, each ball in the
+            urn is equally likely to be chosen, what is the probability that both balls drawn are
+            red?
+            \begin{solution} {
+                \begin{align*}
+                  \frac{8}{12}\frac{7}{11}=\frac{56}{132}=\frac{14}{33}
+                \end{align*}
+                Note that this could also be expressed:
+                \begin{align*}
+                  P(R_1R_2)={{8\choose2}\over{12\choose2}}
+                \end{align*}
+              }
+            \end{solution}
+      \item Now suppose that the balls have different weights, with each red ball
+            having weight $r$ and each white ball having weight $w$. Suppose that the
+            probability that a given ball in the urn is the next one selected is its weight divided
+            by the sum of the weights of all balls currently in the urn. Now what is the
+            probability that both balls are red?
+            \begin{align*}
+              \frac{8r}{8r+4w}\frac{7r}{7r+4w}=\frac{56r^2}{56r^2+60wr+16w^2}=\frac{14^2}{14^2+15+4w^2}
+            \end{align*}
+    \end{enumerate}
+  }
+\end{example}
+\begin{definition}{
+    The Multiplication Rule states that $P(E_1...E_n)$, the probability that all of the events
+    $E_1...E_n$ occur, is equal to $P(E_1)\cdot P(E_2|E_1)\cdot P(E_3|E_1E_2)\cdot...\cdot P(E_n|E_1...E_{n-1})$
+  }
+\end{definition}
+\begin{example}{2f}{
+    In the match problem stated in Example 5m of Chapter 2 , it was shown
+    that $P_N$, the probability that there are no matches when $N$ people randomly select
+    from among their own $N$ hats, is given by
+    \begin{align}
+      \label{eq:nomatchinghats}
+      P_N=\sum_{i=0}^{N}\frac{(-1)^i}{i!}
+    \end{align}
+  }
+\end{example}
+\begin{solution} {
+    This can be thought of as 2 smaller match problems:
+    \begin{align*}
+      P[(E_1,...,E_k)E_{k+1}^c,...,E_n^c]=
+      P(E_1,...,E_k)P(E_{k+1}^c,...,E_n^c)
+    \end{align*}
+    The formulas for both probabilities in the product have already been established (in 5m).
+    The probability that $n\in N$ men select their own hats is:
+    \begin{align*}
+      P(E_{i_1}...E_{i_n})=\frac{(N-n)!}{N!}={N\choose n}
+    \end{align*}
+    And the probability that 0 out of $k$ men choose their hat is
+    \begin{align}
+      P_{N-k}=\sum_{i=0}^{N-k}\frac{(-1)^i}{i!}
+    \end{align}
+    Thus the answer is
+    \begin{align*}
+      {N\choose k}P_{N-k}={N\choose k}\sum_{i=0}^{N-k}\frac{(-1)^i}{i!}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{2g} {
+    An ordinary deck of 52 playing cards is randomly divided into 4 piles of 13 cards
+    each. Compute the probability that each pile has exactly 1 ace.
+  }
+\end{example}
+\begin{solution}{
+    This makes sense to me, but it doesn't appear to be right (though I haven't verified this yet)
+    \begin{align*}
+      {4!{48\choose12}{36\choose12}{24\choose12}\over52!} & =4!\frac{48!}{(36!)(12!)}\frac{36!}{(24!)(12!)}\frac{24!}{(12!)^2}
+                                                          & =4!
+    \end{align*}
+    From the book: consider these events (where $A_1,..,A_4$ are the aces of spades, hearts,
+    diamonds, and clubs, respectively).
+    \begin{align*}
+      E_1 & =A_1~in~any~pile               \\
+      E_2 & =A_1,A_2~in~diff~piles         \\
+      E_3 & =A_1,A_2,A_3~in~diff~piles     \\
+      E_4 & =A_1,A_2,A_3,A_4~in~diff~piles
+    \end{align*}
+    By the multiplication rule
+    \begin{align*}
+      P(E_1E_2E_3E_4)=P(E_1)P(E_2|E_1)P(E_3|E_1E_2)P(E_4|E_1E_2E_3)
+    \end{align*}
+    Of course, $P(E_1)=1$, so $A_1$ can simply be assumed to be one deck, then with
+    51 cards remaining, that deck has a $12\over51$ chance of drawing $A_2$.  Therefore
+    \begin{align*}
+      P(E_2|E_1)=1-{12\over51}={39\over51}
+    \end{align*}
+    Presuming $E_1E_2$, $E_3$ will be true as long as the ace of diamonds isn't
+    dealt to either the pile with the ace of spades, or the one with the ace of hearts.
+    24 more cards must be dealt to those 2 decks, so the odds
+    that neither pile receives the ace of diamonds is:
+    \begin{align*}
+      P(E_3|E_1E_2)=1-{24\over50}={26\over50}
+    \end{align*}
+    By similar logic
+    \begin{align*}
+      P(E_4|E_1E_2E_3)=1-{36\over39}={13\over49}
+      \implies
+      P(E_1E_2E_3E_4)={39\cdot26\cdot13\over51\cdot50\cdot49}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{2h}{
+    Four of the eight teams in the quarterfinal round of the 2016 European
+    Champions League Football (soccer) tournament were the acknowledged strong
+    teams Barcelona, Bayern Munich, Real Madrid, and Paris St-Germain. The
+    pairings in this round are supposed to be totally random, in the sense that all
+    possible pairings are equally likely. Assuming this is so, find the probability that
+    none of the strong teams play each other in this round. (Surprisingly, it seems to
+    be a common occurrence in this tournament that, even though the pairings are
+    supposedly random, the very strong teams are rarely matched against each
+    other in this round.)
+  }
+\end{example}
+\begin{solution} {
+    This can be worked out in a similar way to \textbf{2g}.  Let $T_1,...,T_4$ be the teams
+    Barcelona, Bayern Munich, Real Madrid, and Paris St-Germain, repsectively.
+    \begin{align*}
+      E_1 & =T_1~in~any~game               \\
+      E_2 & =T_1,T_2~in~diff~games         \\
+      E_3 & =T_1,T_2,T_3~in~diff~games     \\
+      E_4 & =T_1,T_2,T_3,T_4~in~diff~games
+    \end{align*}
+    By the multiplication rule
+    \begin{align*}
+      P(E_1E_2E_3E_4)=P(E_1)P(E_2|E_1)P(E_3|E_1E_2)P(E_4|E_1E_2E_3)
+    \end{align*}
+    $P(E_1)=1$, so with 7 teams remaining, there is a one in seven chance that Barcelona will play
+    Bayern Munich in the first round
+    \begin{align*}
+      P(E_2|E_1)=1-{1\over7}={6\over7}
+    \end{align*}
+    Next, compute
+    \begin{align*}
+      P(E_3|E_1E_2)=1-{2\over6}={2\over3}
+    \end{align*}
+    Finally, compute
+    \begin{align*}
+      P(E_4|E_1E_2E_3)=1-{3\over5}={2\over5}
+    \end{align*}
+    Therefore the probability that no strong teams face eachother in round one is
+    \begin{align*}
+      P(E_1E_2E_3E_4)={6\cdot2\cdot2\over7\cdot3\cdot5}={24\over105}={8\over35}
+    \end{align*}
+    Another way to view the problem, is to consider the games as 4 pairs of teams.
+    If each of the 4 strong teams are in separate games, there are $4!$ ways
+    to pair them with the 4 weaker teams.  As there are ${{8\choose2}{6\choose2}{4\choose2}{2\choose2}\over4!}$
+    total possible pairings, the probability that none of the 4 strong teams face eachother in round
+    ond is (again):
+    \begin{align*}
+      {(4!)(4!)\over{8\choose2}{6\choose2}{4\choose2}} & =(4!)(4!)\cdot{(2!)\cancel{(6!)}\over8!}
+      \cdot{(2!)\cancel{(4!)}\over\cancel{6!}}\cdot{(2!)(2!)\over\cancel{4!}}                                                             \\
+                                                       & =4!{2^4\over8\cdot7\cdot6\cdot5}                                                 \\
+                                                       & =4!{2\cdot\cancel{2^3}\over\cancel{8}\cdot7\cdot6\cdot5}={48\over210}={8\over35}
+    \end{align*}
+    The handy dandy formula for counting the number of ways to choose $p$ groups of size $q$ from $n$
+    elements was derived by yours truly.  Above, $p=4$, $q=2$, and $n=8$ (i.e., choose 4 pairs of teams from a pool of 8).
+    It applies the $a~choose~b$ logic with a recursive step (albeit just one in this case, but it can be extended
+    to count the number of ways to choose $c$ groups of $d$ groups of size $e$ from $f$ elements, and so on).
+    \mbox{}\\ \\
+    Consider the example at hand: there are $8\choose2$ ways to pick the first pair.  Then, for each of those choices, there are
+    $6\choose2$ ways to pick the second pair, and so on.  The product ${8\choose2}{6\choose2}$ counts \textit{all permutations} of
+    sets of 2 pairs.
+    \mbox{}\\ \\
+    For example, given 2 pairs $p_1$ and $p_2$, both permutations of those pairs ($p_1,p_2$ and $p_2,p_1$) are counted.
+    In the scenario where $p_1$ is picked first, the 2 values that make up $p_2$ are part of the 6 items available for the second pair.
+    Likewise, in the scenario where $p_2$ is picked first, the values of $p_1$ are available for the second pair.
+    \mbox{}\\ \\
+    Recall, ${a\choose b}={a!\over{(a-b)!(b!)}}$; the $b!$ is in the denominator to divide by the number of permutations
+    per chosen value-set.  Notice how this formula similarly has a sort of factorial of \textit{choose} terms in the numerator,
+    ${8\choose2}{6\choose2}{4\choose2}{2\choose2}$.
+  }
+\end{solution}
+
+\section{Bayes's Formula}
+\begin{align*}
+  P(E) & =P(EF) + P(EF^c)                          \\
+       & =P(E|F)P(F) + P(E|F^c)(1-P(F))\numberthis
+\end{align*}
+\mbox{}\\
+\begin{example}{3a} {
+    \begin{enumerate}
+      \item
+            An insurance company believes that people can be divided into two classes:
+            those who are accident prone and those who are not. The company’s statistics
+            show that an accident-prone person will have an accident at some time within a
+            fixed 1-year period with probability .4, whereas this probability decreases to .2 for
+            a person who is not accident prone. If we assume that 30 percent of the
+            population is accident prone, what is the probability that a new policyholder will
+            have an accident within a year of purchasing a policy?
+            \begin{solution} {
+                Let $B$ be the event where a \textit{bad} driver is picked (accident prone), and $G$ be the event
+                where a \textit{good} driver is picked (not accident prone).  Let $A$ be the event where the chosen
+                driver has an accident in the first year.
+                \begin{align*}
+                  P(A) & =P(A|B)P(B)+P(A|G)P(G) \\
+                       & =(.4)(.3)+(.2)(.7)=.26
+                \end{align*}
+              }
+            \end{solution}
+      \item Suppose that a new policyholder has an accident within a year of purchasing a
+      policy. What is the probability that he or she is accident prone?
+      \begin{solution} {
+        \begin{align*}
+          P(B|A)&={P(BA)\over P(A)}\\
+          &={.3\cdot.4\over.26}={6\over13}
+        \end{align*}
+      }
+      \end{solution}
+    \end{enumerate}
+  }
+\end{example}
+\begin{example}{3b}{
+  Consider the following game played with an ordinary deck of 52 playing cards:
+The cards are shuffled and then turned over one at a time. At any time, the
+player can guess that the next card to be turned over will be the ace of spades; if
+it is, then the player wins. In addition, the player is said to win if the ace of
+spades has not yet appeared when only one card remains and no guess has yet
+been made. What is a good strategy? What is a bad strategy?
+}
+\end{example}
+\begin{solution}{
+  This is a trick question: the ace of spades is equally likely to be in any one of the 52 possible positions.
+  This is akin to asking someone to pick a number between 1 and 52, if you get it right, you win (proximity
+  is awarded nothing).
+}
+\end{solution}
+\begin{example}{3c}{
+  In answering a question on a multiple-choice test, a student either knows the
+answer or guesses. Let $p$ be the probability that the student knows the answer
+and $1-p$ be the probability that the student guesses. Assume that a student who
+guesses at the answer will be correct with probability $1/m$, where $m$ is the
+number of multiple-choice alternatives. What is the conditional probability that a
+student knew the answer to a question given that he or she answered it
+correctly?
+}
+\end{example}
+\begin{solution}{
+  \begin{align*}
+    P(K|C)={P(C|K)P(K)\over P(C)}
+    ={P(KC)\over P(C)}
+    ={P(K)\over P(C)}
+  \end{align*}
+  and
+  \begin{align*}
+    P(C)&=P(C|K)P(K)+P(C|K^c)P(K^c)=p+{1\over m}\\
+    \implies P(K|C)&=p({1\over p+{1\over m}(1-p)})
+  \end{align*}
+} 
+\end{solution}
+\begin{example}{3d} {
+ A laboratory blood test is 95 percent effective in detecting a certain disease when
+it is, in fact, present. However, the test also yields a “false positive” result for 1\%
+of the healthy persons tested. If .5\% of the population actually has the disease,
+what is the probability that a person has the disease given that the test result is positive?
+}
+\end{example}
+\begin{solution}{
+    \begin{align*}
+      P(A)&=P(A|D)P(D)+P(A|D^c)P(D^c)\\
+      P(A)&=.95(.005)+.01(.995)=.147\\
+      P(D|A)&={P(AD)\over P(A)}\\
+      P(D|A)&={.95(.005)\over .147}={95\over294}\approx.323
+    \end{align*}
+} 
+\end{solution}
+\end{document}

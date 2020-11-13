@@ -1,0 +1,22 @@
+{
+	"version": "1.0",
+	"tasks": [
+		{
+			"taskName": "pdflatex - build current",
+			"options": {
+				"env": {
+					"src_dir": "${workspaceFolder}/src",
+					"build_dir": "${workspaceFolder}/build"
+				}
+			},
+			"type": "shell",
+			"command": "pdflatex -output-directory ${build_dir} ${file}",
+			"problemMatcher": [],
+			"label": "pdflatex - build current",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

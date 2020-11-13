@@ -1,0 +1,174 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+\title{Probability 18600}
+\date{2020-11-07}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+
+\newcommand{\lnbk}{\mbox{\\ \\ \\}}
+
+\newcommand{\exref}[1]{ (ex \textbf{#1}) }
+
+\newenvironment{example}[2]{
+  \header{Example #1}
+  \begin{adjustwidth}{\exampleIndent}{2pt} {
+    {#2}
+  }
+  \end{adjustwidth}
+}
+
+\newenvironment{exampleOrig}[2]{
+  \noindent\fbox{
+    \parbox{\textwidth}{
+  \large
+  \textbf{Example #1}
+  \normalsize
+  {#2}
+  }
+  }
+}
+
+\newenvironment{textbox}
+{\begin{center}
+  \begin{tabular}{|p{0.9\textwidth}|}
+    \hline \\
+    }
+    {
+    \\\\\hline
+  \end{tabular}
+\end{center}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+% \newenvironment{proposition}[1] {
+%   \begin{flushleft}
+%   \large
+%   \textbf{Proposition #1}
+%   \end{flushleft}
+% }
+\definecolor{propbg}{RGB}{180,220,255}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\begin{document}
+\maketitle
+\section{hello}\zlabel{sec:one}
+The section name is: \ztitleref{sec:one}.
+\section{1.6 The Number of Integer Solutions to Equations}
+\paragraph{What is this?}
+Given a set of n items, and r divisons of size $n_1,...,n_r$,
+such that $\sum n_{i}=n$, the number of ways in which the items could be divided
+into such groups is the \textit{Number of Integer Solutions}.
+
+\paragraph{Why use it?}
+A question that calls for such a solution could be the following:
+A man goes fishing at Lake Toconderoga, which contains
+four types of fish: lake trout, catfish, bass, and bluefish.  If he caught
+10 fish total, how many combinations of the 4 fish could he have caught?
+
+\paragraph{}
+The outcome of the fishing trip could be represented as a vector, with one entry per fish type:
+$\vec{x}=(x_{1},x_{2},x_{3},x_{4})$.
+The the question is: how many positive integer valued vectors satisfy the following equation?
+\begin{equation}
+  \label{vec_entry_sum}
+  x_{1}+x_{2}+x_{3}+x_{4}=10
+\end{equation}
+Suppose there are $n$ consecutive zeros lined up in a row:
+\begin{equation*}
+  000...000
+\end{equation*}
+Each arrangement of the $r-1$ into the $n-1$ spaces between adjacent zeros corresponds to a positive
+solution to \eqref{vec_entry_sum}, where $x_{i}$ is the number of zeros between the $(i-1)^{th}$, and $i^{th}$ dots.
+\\ \\
+For instance, if $n=8$, and $r=3$, then the choice:
+\begin{equation*}
+  0.0000.000 \implies x_{1}=1,~x_{2}=4,~x_{3}=3
+\end{equation*}
+\\ \\
+Therefore, there are $n-1 \choose r-1$ distinct \textit{Positive Integer Valued Vectors} $(x_{1},...,x_{r})$
+that satisfy the equation:
+\begin{equation*}
+  x_{1}+...+x_{r}=n,~x_{i} > 0,~i=1,...,r
+\end{equation*}
+\paragraph{To count nonnegative} integer solutions, let $y_{i}=x_{i}+1$ and count the solutions to
+\begin{equation*}
+  y_{1}+...+y_{r}=n+r
+\end{equation*}
+\begin{proposition}{6.1}{
+    The number of \textit{Nonnegative Integer Valued Vectors} satisfying \eqref{vec_entry_sum} is
+    \begin{equation*}
+      n+r-1 \choose r-1
+    \end{equation*}
+}
+\end{proposition}
+\mbox{}\\
+
+\begin{example}{6c} {
+    How many terms are there in the multinomial expansion of $(x_{1}+...+x_{r})^{n}$?
+  }
+\end{example}
+\mbox{}\\
+\begin{solution} {
+    there are $n+r-1 \choose r-1$ terms in the polynomial, as each term is a unique division
+    of the $n$ degrees of powers spread across the $r$ variables.
+  }
+\end{solution}
+\mbox{}\\
+\begin{example}{6d} {
+    Consider a set of $n$ indistinguishable antennas, of which $m<n$ are defective,
+    and which must be arranged in a sequence such that the defective antennas are separated by at least
+    1 functional antenna.
+    Imagine the defective items are lined up among themselves, and all that's left to do
+    is insert the functional ones between them.  There are $m+1$ spaces in which the functional
+    antenna may be inserted.  There are $m+1$ groups in which the functional antenna must be \textbf{divided}.
+    All but the first and last group must have at least 1 antenna.
+  }
+\end{example}
+\begin{solution} {
+    \begin{align*}
+       & x_{1}+...+x_{m+1}=n-m,          \\
+       & x_{i}>0~\{i~|~2\leq i \leq m\}, \\
+       & x_{1}\geq 0,~x_{m+1}\geq 0
+    \end{align*}
+    \paragraph{}So it follows that if
+    \begin{align*}
+       & y_{i}=x_{i}~\{i~|~2\leq i \leq m\} \\
+       & y_{1}=x_{0}+1,~y_{m+1}=x_{m+1}+1
+    \end{align*}
+    \paragraph{}Then the number of possible antenna arrangements is the same as the number of
+    positive integer solutions to the equation if \exref{6c} then
+    \begin{align*}
+      y_{1}+...+y_{m+1}=n-m+1 \implies arrangements={n-m+1 \choose m}
+    \end{align*}
+  }
+\end{solution}
+\end{document}
