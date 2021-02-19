@@ -1,0 +1,200 @@
+
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{stackrel}
+\usepackage[colorlinks]{hyperref}
+\usepackage[user,titleref]{zref}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{scrextend}
+\usepackage{lipsum}
+
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{multicol}
+
+\usepackage{xcolor}
+\colorlet{linkequation}{red}
+\colorlet{linktheo}{green}
+\usepackage[colorlinks]{hyperref}
+
+\title{Linear Algebra 18.065: Rapidly Decaying Singular Values}
+\date{2021-02-17}
+\author{John Colvin}
+
+\definecolor{propbg}{RGB}{180,220,255}
+\definecolor{factbg}{RGB}{170,232,145}
+\definecolor{formula_header}{RGB}{30,40,210}
+
+\newcounter{theoremc}
+\newcommand{\theoremc}{\refstepcounter{theoremc}{\noindent\textbf{Theorem} \arabic{theoremc}}}
+\newcommand{\myparbox}{\parbox[p]{10cm}}
+\newcommand{\vpush}{\vspace{3mm}}
+\newcommand{\minmax}[2]{\min\limits_{#1}~\max\limits_{#2}}
+\newcommand{\maxmin}[2]{\max\limits_{#1}~\min\limits_{#2}}
+
+\newenvironment{note}{
+  \begin{flushleft}
+  \begin{addmargin}[2em]{2em}
+}{
+  \end{addmargin}
+  \end{flushleft}
+}
+\newenvironment{proof}
+{
+\noindent
+\begin{addmargin}[2em]{0em}
+\textbf{Proof}
+}
+{
+\end{addmargin}
+}
+
+\newenvironment{fact}{
+\begin{flushleft}
+  \textbf{Fact}
+\end{flushleft}
+\begin{addmargin}[2em]{2em}
+}
+{
+\end{addmargin}
+\vspace{5mm}
+\makebox[\linewidth]{\rule{12cm}{0.4pt}}
+\vspace{5mm}
+}
+
+\newenvironment{theorem}[1]{
+\begin{tcolorbox}[colback=green!30,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\theoremc: \space \textbf{#1}
+\begin{addmargin}[2em]{2em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+% \definecolor{formula}
+
+\newenvironment{formula}[1]{
+\begin{tcolorbox}[colback=white,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\begin{flushleft}
+{\color{formula_header} \textbf{Formula}}
+\textbf{#1}
+\end{flushleft}
+\begin{addmargin}[2em]{6em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+\newenvironment{red_rounded_box}{
+\begin{tcolorbox}[enhanced jigsaw,
+    colback=gray!30,%gray background
+    colframe=Maroon,% black frame colour
+    width=5cm,% Use 5cm total width,
+    arc=3mm, auto outer arc,
+    boxrule=5pt,
+    drop shadow={Maroon!50!gray!80}
+  ]
+}
+{ \end{tcolorbox} }
+
+\newcommand*{\reftheo}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linktheo,
+      linkbordercolor=linktheo,
+    }%
+    (\ref{#1})%
+  \endgroup
+}
+
+\newcommand*{\refequation}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linkequation,
+      linkbordercolor=linkequation,
+    }%
+    \ref{#1}%
+  \endgroup
+}
+
+\newenvironment{axiom}{
+  \begin{tcolorbox}[enhanced jigsaw,
+    colback={blue!20},
+    colframe=Maroon,
+    arc=2mm, auto outer arc,
+    boxrule=3pt,
+    drop shadow={blue!60!gray!60}
+  ]
+}{
+  \end{tcolorbox}
+}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\newenvironment{fact_simple}{
+  \noindent\textbf{Fact}\\
+  \begin{addmargin}[10em]{6em}
+}
+{
+  \end{addmargin}
+}
+
+\begin{document}
+\maketitle
+
+\textbf{Sylvester Equation}
+  \begin{equation}
+    AX-XB=C
+  \end{equation}
+\vspace{5mm}
+\makebox[\linewidth]{\rule{12cm}{0.4pt}}
+
+\begin{proposition}
+  \myparbox{
+    A family of matrices $C_n$ has \textbf{log-rank} if
+    \begin{align}
+      |C_n-E_n)_{ij}|<\epsilon
+    \end{align}
+    for nearby matrices $E_n$ that have
+    \begin{align}
+      rank(E_n)<c(\log{n})^q
+    \end{align}
+  }
+\end{proposition}
+\begin{theorem}{ADI and the Zolotarev Problem}
+  \vpush
+  \myparbox{
+    ADI solves the sylvester equation in two steps.
+    \begin{equation}
+      AX-XB=C
+    \end{equation}
+    Beginning with $X_j$, compute $X_{j+{1\over 2}}$, then use the result to
+    compute $X_{j+1}$ (the former is an \textit{intermediate step}, hence the
+    fraction in the subscript).
+    \begin{align}
+      X_{j+{1\over 2}}(B-p_jI)=C-(A-p_jI)X_j\\
+      (A-q_jI)X_{j+1}=C-X_{j+{1\over 2}}(B-q_jI)
+    \end{align}
+  }
+\end{theorem}
+
+\end{document}

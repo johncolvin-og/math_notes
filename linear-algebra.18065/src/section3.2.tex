@@ -1,0 +1,353 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{stackrel}
+\usepackage[colorlinks]{hyperref}
+\usepackage[user,titleref]{zref}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{scrextend}
+\usepackage{lipsum}
+
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{multicol}
+
+\usepackage{xcolor}
+\colorlet{linkequation}{red}
+\colorlet{linktheo}{green}
+\usepackage[colorlinks]{hyperref}
+
+\title{Linear Algebra 18.065: Interlacing Eigenvalues and Low Rank Signals}
+\date{2021-02-13}
+\author{John Colvin}
+
+\definecolor{propbg}{RGB}{180,220,255}
+\definecolor{factbg}{RGB}{170,232,145}
+\definecolor{formula_header}{RGB}{30,40,210}
+
+\newcounter{theoremc}
+\newcommand{\theoremc}{\refstepcounter{theoremc}{\noindent\textbf{Theorem} \arabic{theoremc}}}
+\newcommand{\myparbox}{\parbox[p]{10cm}}
+\newcommand{\vpush}{\vspace{3mm}}
+\newcommand{\minmax}[2]{\min\limits_{#1}~\max\limits_{#2}}
+\newcommand{\maxmin}[2]{\max\limits_{#1}~\min\limits_{#2}}
+
+\newenvironment{note}{
+  \begin{flushleft}
+  \begin{addmargin}[2em]{2em}
+}{
+  \end{addmargin}
+  \end{flushleft}
+}
+\newenvironment{proof}
+{
+\noindent
+\begin{addmargin}[2em]{0em}
+\textbf{Proof}
+}
+{
+\end{addmargin}
+}
+
+\newenvironment{fact}{
+\begin{flushleft}
+  \textbf{Fact}
+\end{flushleft}
+\begin{addmargin}[2em]{2em}
+}
+{
+\end{addmargin}
+\vspace{5mm}
+\makebox[\linewidth]{\rule{12cm}{0.4pt}}
+\vspace{5mm}
+}
+
+\newenvironment{theorem}[1]{
+\begin{tcolorbox}[colback=green!30,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\theoremc: \space \textbf{#1}
+\begin{addmargin}[2em]{2em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+% \definecolor{formula}
+
+\newenvironment{formula}[1]{
+\begin{tcolorbox}[colback=white,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\begin{flushleft}
+{\color{formula_header} \textbf{Formula}}
+\textbf{#1}
+\end{flushleft}
+\begin{addmargin}[2em]{6em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+\newenvironment{red_rounded_box}{
+\begin{tcolorbox}[enhanced jigsaw,
+    colback=gray!30,%gray background
+    colframe=Maroon,% black frame colour
+    width=5cm,% Use 5cm total width,
+    arc=3mm, auto outer arc,
+    boxrule=5pt,
+    drop shadow={Maroon!50!gray!80}
+  ]
+}
+{ \end{tcolorbox} }
+
+\newcommand*{\reftheo}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linktheo,
+      linkbordercolor=linktheo,
+    }%
+    (\ref{#1})%
+  \endgroup
+}
+
+\newcommand*{\refequation}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linkequation,
+      linkbordercolor=linkequation,
+    }%
+    \ref{#1}%
+  \endgroup
+}
+
+\newenvironment{axiom}{
+  \begin{tcolorbox}[enhanced jigsaw,
+    colback={blue!20},
+    colframe=Maroon,
+    arc=2mm, auto outer arc,
+    boxrule=3pt,
+    drop shadow={blue!60!gray!60}
+  ]
+}{
+  \end{tcolorbox}
+}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\newenvironment{fact_simple}{
+  \noindent\textbf{Fact}\\
+  \begin{addmargin}[10em]{6em}
+}
+{
+  \end{addmargin}
+}
+
+\begin{document}
+\maketitle
+
+\begin{theorem}{Courant-Fischer Max-Min Principle}
+  \label{theo:courantfischer}
+  \vpush
+  \myparbox{
+    The $i^{th}$ largest singular value of a matrix $A$, $\sigma_i$, is the \textit{maximum minimum}
+    \textbf{Rayleigh Quotient} of all $i\dim$ subspaces within $A$, $V_i$.
+  }
+  \begin{align}
+    \sigma_i(A) & =\maxmin{}{x \in V_i}{x^TAx\over x^Tx}
+  \end{align}
+  It follows then, that for a symmetric matrix $S$:
+  \begin{align}
+    \sigma_i(S)=\lambda_i(S) & =\maxmin{}{x \in V_i}{x^TSx\over x^Tx}
+  \end{align}
+\end{theorem}
+\begin{theorem}{Weyl's Inequalities}
+  \vpush
+  Given two symmetric matrices, $S$ and $T$
+  \begin{align}
+    \lambda_{i+j-1}(S+T)\leq \lambda_i(S)+\lambda_i(T) \\
+    \lambda_k(S)+\lambda_n(T)\leq\lambda_k(S+T)\leq\lambda_k(S)+\lambda_1(T)
+  \end{align}
+\end{theorem}
+\begin{note}
+  \myparbox{
+    The eigenvalues $\beta_i$ of a rank 1 perturbation $P=S+\theta uu^T$
+    interlace those of $S$:
+  }
+  \begin{equation}
+    \beta_1\geq\lambda_1\geq\beta_{2}\geq...\geq\lambda_{k-1}\geq\beta_k\geq\lambda_k
+  \end{equation}
+  \myparbox{
+    \textbf{Basic Proof:}\\ \\
+    Consider an example.  Suppose there is a matrix $S$ that forms a basis for
+    $\mathbb{R}^5$, and suppose that it is perturbed by the one dimensional
+    matrix $uu^T$, to get $P=S+uu^T$.  If $\lambda_4(S)$ was both the greatest
+    minimum rayleigh quotient $R_s(x)$ for any 4 dim space in $\mathbb{R}^5$, and
+    the smallest maximum for any 2 dim space, and $\lambda_5(P)$ is the minimum
+    rayleigh quotient $R_p(x)$ for any 5 dim space, $\lambda_5(P)\leq \lambda_4(S)$
+    because there exists some 4 space $V_{\dim{4}}$ in $\mathbb{R}^5$ that is
+    orthogonal to the space $C(uu^T)_{\dim{1}}$:\newline
+    \begin{align}
+      \exists~V_{\dim{4}} \in \mathbb{R}^5\perp~C(uu^T)_{\dim{1}}\\
+      \implies R_p(x):\{x\in \mathbb{R}^5\}\leq\lambda_4(S)
+    \end{align}
+    That space $V_{\dim{4}}$ would remain unaffected by the perturbation, and thus
+    must have a \textbf{Rayleigh Quotient} $R(P)\leq\lambda_4(S)$
+    \\
+  }
+  \newline
+  \newline
+  By the \textbf{Min Max Theorem} \reftheo{theo:courantfischer}, the $i^{th}$ eigenvalue of $P$ cannot exceed
+  the $(i-1)^{th}$ eigenvalue of $S$ because $n-1$ dimensions of $S$ are
+  orthogonal to $uu^T$.  Consider the subspace (projection) of $S$ below
+  \begin{align*}
+    S_{n-1}^{\prime}=\begin{bmatrix}
+      S_{n-1} & 0 \\
+      0       & 0
+    \end{bmatrix}
+  \end{align*}
+  Since $\lambda_2$ is the smallest maximum rayleigh quotient of $n-1$
+  dimensional subspaces of $S$, then
+  \begin{align}
+    \minmax{\dim V=n-1}{x\in V}R(S^\prime_{n-1},x) \geq \minmax{\dim V=n-1}{x\in V} R(S,x)
+  \end{align}
+  \newline
+  \newline
+  Similarly, since $\lambda_2$ is the greatest
+  minimum rayleigh quotient of 2 dimensional subspaces of $S$, then
+  \begin{align}
+    \maxmin{\dim V=1}{x\in V}R(S^\prime_{n-1},x) \leq \maxmin{\dim V=1}{x\in V} R(S,x)
+  \end{align}
+  By \reftheo{theo:courantfischer}
+  \begin{align*}
+     & \lambda_1(S^\prime_{n-1}) & = & \minmax{\dim V=n-1}{x\in V}R(S^\prime_{n-1},x) \\
+     &                           & = & \maxmin{\dim V=1}{x\in V}R(S^\prime_{n-1},x)   \\
+     & \lambda_2(S)              & = & \minmax{\dim V=n-1}{x\in V} R(S,x)             \\
+     & \lambda_1(S)              & = & \maxmin{\dim V=1}{x\in V} R(S,x)               \\
+  \end{align*}
+  By simple substitution, it follows that:
+  \begin{align*}
+    \lambda_2(S)\leq \lambda_1(S^\prime_{n-1})\leq \lambda_1(S)
+  \end{align*}
+  Since there exists an $n-1$ dimensional subspace $V_{n-1}$ that is orthogonal
+  to $u$, and intersects $P=S+\theta uu^T$ at some $S^\prime_{n-1}$
+  (not necessarily with a zero row/column, but an $n-1$ dimensional projection of $S$ all the same),
+  all $x$'s in $V_{n-1}$ are in the nullspace of $\theta uu^T$.  Thus, the eigenvalues of
+  the perturbation $P$ interlace those of $S$.
+  \begin{align}
+     & Px=Sx+\theta uu^Tx=Sx+0~:~\{x~|~x\in V_{n-1}\}\nonumber \\
+     & \implies \lambda_2(P)\leq \lambda_1(S)\leq \lambda_1(P)
+  \end{align}
+  \textbf{Note}: This projection of $P=S+\theta uu^T$ is \textbf{NOT} equal to $S$ (unless $S$ is already orthogonal to $u$)
+  \begin{align*}
+    S^\prime_{n-1} & =S-\gamma uu^T                                      \\
+    S              & =S^\prime_{n-1}+\gamma uu^T                         \\
+    \implies P     & =S^\prime_{n-1}+(\gamma + \theta)uu^T=S+\theta uu^T \\
+  \end{align*}
+  \textbf{Note}:
+  \begin{align*}
+    S\perp u\leftrightarrow\gamma=0
+  \end{align*}
+  Slap a Lagrange multiplier on there to minimize the eigenvalues in $V_{n-1}$.
+\end{note}
+\begin{theorem}{The Derivative of an Eigenvalue}
+  \vpush
+  Given a matrix $A(t)$ with \textit{no repeated eigenvalues}, if $\lambda(t) =y^T(t)A(t)x(t)$, then
+  \begin{align}
+    {d\lambda\over dt} & =y^T(t){dA\over dt}x(t)
+  \end{align}
+\end{theorem}
+\vpush
+\begin{proof}
+  \begin{align*}
+    A(t)x(t)   & =\lambda(t)x(t)   \\
+    y(t)A^T(t) & =\lambda(t)y^T(t) \\
+    A          & =X\Lambda X^{-1}  \\
+  \end{align*}
+  When $x(t)$ is the $i^{th}$ eigenvector of $A$, $y(t)$ is the $i^{th}$ eigenvector of $A^T$.
+  In other words, $x(t)$ is the $i^{th}$ column of $X$ when $y(t)$ is the $i^{th}$ column of $(X^{-1})^T$.
+  Therefore:
+  \begin{equation*}
+    y^T(t)x(t)=1
+  \end{equation*}
+  This is the key to computing the derivative of the eigenvalue.  It then follows that
+  \begin{align}
+    \lambda(t)=y^T(t)A(t)x(t)
+  \end{align}
+  By the product rule:
+  \begin{align*}
+    {d\lambda\over dt} & ={dy^T\over dt}A(t)x(t)+y^T(t){dA\over dt}x(t)+y^T(t)A(t){dx\over dt} \\
+                       & ={dy^T\over dt}Ax+y^T{dA\over dt}x+y^TA{dx\over dt}
+  \end{align*}
+  Substitute $Ax=\lambda x$ and $y^TA=\lambda y^T$.
+  \begin{align}
+    \nonumber
+    {d\lambda\over dt} & ={dy^T\over dt}\lambda x + y^T{dA\over dx}x + \lambda y^T{dx\over dt}    \\
+    \nonumber
+                       & =\lambda \left({dy^T\over dt}x + y^T{dx\over dt}\right)+y^T{dA\over dx}x
+  \end{align}
+  Consider the function for which ${dy^T\over dt}x+y^T{dx\over dt}$ is the
+  derivative (think product rule).
+  \begin{align*}
+    {d\left({y^Tx}\right)\over dt}                 & ={dy^T\over dt}x+y^T{dx\over dt}                  \\
+    y^Tx=1 \implies {d\left({y^Tx}\right)\over dt} & ={dy^T\over dt}x+y^T{dx\over dt}={d(1)\over dt}=0
+  \end{align*}
+  Finally, it follows that
+  \begin{align}
+    {d\lambda\over dt}=\lambda(0)+y^T{dA\over dt}x=y^T{dA\over dt}x
+  \end{align}
+\end{proof}
+\begin{theorem}{The Derivative of a Singular Value}
+  \vpush
+  Given a matrix $A$ with SVD $A=U\Sigma V^T$ and \textit{no repeated singular values},
+  \begin{align}
+    {d\sigma\over dt}=u(t){dA\over dt}v^T(t)
+  \end{align}
+\end{theorem}
+\begin{proof}
+  Since $U$ and $V^T$ are \textit{orthogonal} matrices,
+  \begin{align}
+    U^TAV          & =\Sigma                      \\
+    u^T(t)A(t)v(t) & =u^T(t)\sigma u(t)=\sigma(t)
+  \end{align}
+  So it follows (by the product rule)
+  \begin{align*}
+    {d\sigma\over dt} & ={du^T\over dt}Av + u^T{dA\over dt}v + u^TA{dv\over dt} \\
+  \end{align*}
+  Substitute $Av=\sigma u$ and $Au=\sigma v$:
+  \begin{align*}
+     & ={du^T\over dt}\sigma u + u^T{dA\over dt}v + \sigma v^T{dv\over dt}    \\
+     & =u^T{dA\over dt}v + \sigma\left({du^T\over dt}u+v^T{dv\over dt}\right)
+  \end{align*}
+  Consider the integral of ${du^T\over dt}u$ and $v{dv\over dt}$ (think product rule):
+  \begin{align*}
+    0={d(1)\over dt}={d(u^Tu)\over dt}={du^T\over dt}u+u^T{du\over dt} \\
+    \implies{du^T\over dt}u=-u^T{du\over dt}
+  \end{align*}
+  Of course $x^Ty=y^Tx$ when $x$ and $y$ are vectors.  In this case ${du^T\over dt}$
+  and $u$ are vectors just like $x^T$ and $y$, therefore:
+  \begin{align*}
+    {du^T\over dt}u=-u^T{du\over dt}
+    \implies {du^T\over dt}u=u^T{du\over dt}=0
+  \end{align*}
+  Finally, it follows that
+  \begin{align*}
+    {d\lambda\over dt} & =u^T{dA\over dt}v + \sigma\left({du^T\over dt}u+v^T{dv\over dt}\right) \\
+                       & =u^T{dA\over dt}v + \sigma(0)=u^T{dA\over dt}v
+  \end{align*}
+\end{proof}
+\end{document}

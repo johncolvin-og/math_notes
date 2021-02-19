@@ -1,0 +1,637 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{showexpl}
+\usepackage{xparse}
+\usepackage{caption}
+\usepackage{changepage}
+\title{Probability 18600}
+\date{2020-11-08}
+\renewcommand{\familydefault}{\sfdefault}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\theoremstyle{axiom}
+\newtheorem{axiom}{Axiom}
+
+\theoremstyle{proposition}
+\newtheorem{proposition}{Proposition}
+
+\NewDocumentEnvironment{sidebyside}{O{.50} o +m +m}{%
+  \noindent\begin{minipage}[t][][t]{#1\linewidth}%
+  #3% Content of the first minipage
+  \end{minipage}%
+  \hfill%
+  \noindent\begin{minipage}[t][][t]{\IfValueTF{#2}{#2}{#1}\linewidth}%
+  #4% Content of the second minipage
+  \end{minipage}\\% newline is important, it allows \hfill to work correctly, try removing it ;)
+}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+\newcommand{\tocenter}[1]{\begin{center}#1\end{center}}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+
+\newcommand{\lnbk}{\mbox{\\ \\ \\}}
+
+\newcommand{\exref}[1]{ (ex \textbf{#1}) }
+
+\newenvironment{propositionenv}[2]{
+  \begin{proposition}
+    \textbf{#1}
+    \begin{adjustwidth}{\exampleIndent}{2pt} {
+      {#2}
+    }
+    \end{adjustwidth}
+  \end{proposition}
+}
+
+\newenvironment{example}[2]{
+  \header{Example #1}
+  \begin{adjustwidth}{\exampleIndent}{2pt} {
+    {#2}
+  }
+  \end{adjustwidth}
+}
+
+\newenvironment{exampleOrig}[2]{
+  \noindent\fbox{
+    \parbox{\textwidth}{
+  \large
+  \textbf{Example #1}
+  \normalsize
+  {#2}
+  }
+  }
+}
+
+\newenvironment{textbox}
+{\begin{center}
+  \begin{tabular}{|p{0.9\textwidth}|}
+    \hline \\
+    }
+    {
+    \\\\\hline
+  \end{tabular}
+\end{center}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+% \newenvironment{proposition}[1] {
+%   \begin{flushleft}
+%   \large
+%   \textbf{Proposition #1}
+%   \end{flushleft}
+% }
+\definecolor{propbg}{RGB}{180,220,255}
+\newenvironment{propositionEnv}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\begin{document}
+\maketitle
+\setcounter{section}{1}
+\section{Sample Space and Events}
+\begin{itemize}
+  \item the sample space of an experiment is the set of \textit{all possible outcomes}, however
+        they may be enumerated.  For example:
+        \begin{enumerate}
+          \item If the outcome of an experiment consists of the determination of the sex of a
+                newborn child, then
+                \begin{align*}
+                  S=\{g,b\}
+                \end{align*}
+          \item If the experiment consists of tossing two dice, then the sample space consists
+                of the 36 points (where $i$ is the outcome of die 1, and $j$ that of die 2).
+                \begin{align*}
+                  S=\{(i,j):i,j=1,2,3,4,5,6\}
+                \end{align*}
+        \end{enumerate}
+  \item Any subset $E$ of the sample space is known as an \textit{event}
+  \item It follows that an event $G$ could be defined as the union of 2 other events $E$ and $F$
+        \begin{align*}
+          G={E \cup F}
+        \end{align*}
+  \item Given an event, $E$, the complement of that event, $E^{c}$, is the subset of all outcomes that are \textit{not} in $E$.
+\end{itemize}
+\paragraph{DeMorgan's Laws} illustrate basic relationships of unions, intersections, and complements within the context of an experiment.
+\begin{align*}
+  \left(
+  \stackrel{n}{
+    \bigcup_{i=i}
+  }
+  E_{i}
+  \right)^{c}=
+  \stackrel{n}{
+    \bigcap_{i=1}
+  }
+  E_{i}^{c} \\
+  \left(
+  \stackrel{n}{
+    \bigcap_{i=1}
+  }
+  E_{i}
+  \right)^{c}=
+  \stackrel{n}{
+    \bigcup_{i=1}
+  }
+  E_{i}^{c}
+\end{align*}
+\section{Axioms of Probability}
+\paragraph{The Probability} of an event could be defined in terms of its long run \textit{relative frequency}
+\begin{definition}
+  The Relative Frequency of an event $E$ in the sample space $S$ of an experiment, is the number of times $E$ occurs over the course of $n$ repititions of that expirement,
+  as $n\to \infty$.
+  \begin{equation}
+    P(E)=\lim_{n\to \infty}\frac{n(E)}{n}
+  \end{equation}
+\end{definition}
+\begin{axiom}
+  $0 \leq P(E) \leq 1$
+\end{axiom}
+\begin{axiom}
+  $P(S)=1$
+\end{axiom}
+\begin{axiom}
+  For any sequence of mutually exclusive events $E_{1},...,E_{n}$
+  \begin{align*}
+    P
+    \left(
+    \stackrel{\infty}{
+      \bigcup_{i=1}
+    }
+    E_{i}
+    \right)=
+    \stackrel{\infty}{
+      \sum_{i=1}
+    }
+    P(E_{i})
+  \end{align*}
+\end{axiom}
+\section{Some Simple Propositions}
+\begin{example}{4a}{
+    J is taking two books along on her holiday vacation. With probability .5, she will
+    like the first book; with probability .4, she will like the second book; and with
+    probability .3, she will like both books. What is the probability that she likes
+    neither book?
+  }
+\end{example}
+\begin{solution} {
+    Let $E_{1}$ be the probability she likes the first book, $E_{2}$ be the probability she likes the second.  Then,
+    \begin{align*}
+      E_{1}                                 & =0.5                  \\
+      E_{2}                                 & =0.4                  \\
+      E_{1} \cap E_{2}                      & =0.3                  \\
+      \implies E_{1}+E_{2}-E_{1} \cap E_{2} & =0.6=E_{1} \cup E_{2}
+    \end{align*}
+    Alternatively, it follows
+    \begin{align*}
+      E_{1} \cap E_{2}^{c} & =0.2 \\
+      E_{1}^{c} \cap E_{2} & =0.1
+    \end{align*}
+    Once again, the probablity that J likes at least one book is:
+    \begin{align*}
+      E_{1} + E_{1}^{c} \cap E_{2} & =0.5 + 0.1=0.6 \\
+      an~alternative~equality~is                    \\
+      E_{2} + E_{2}^{c} \cap E_{1} & =0.4 + 0.2=0.6
+    \end{align*}
+    The probability she likes neither book is easily deduced if the probability that she likes at least 1 book is known:
+    \begin{align*}
+      E_{1}^{c} \cap E_{2}^{c}=(E_{1} \cup E_{2})^{c}=1-E_{1} \cup E_{2}=0.4
+    \end{align*}
+  }
+\end{solution}
+
+\begin{proposition}
+  \begin{align}
+    P(E^{c})=1-P(E)
+  \end{align}
+\end{proposition}
+
+\begin{proposition}
+  \begin{align}
+    E \subset F \implies P(E)\leq P(F)
+  \end{align}
+\end{proposition}
+\begin{proposition}
+  \begin{align}
+    P(E\cup F) & =P(E)+P(F)-P(EF) \\
+    P(E^{c}F)  & =P(F)-P(EF)
+  \end{align}
+\end{proposition}
+
+\begin{propositionenv}{Inclusion-Exclusion Identity}{
+  \label{prop:inclexcl}
+    The probability of the union of n events equals the sum of the probabilities of the events taken
+    one at a time, minus the sum of the probabilities of the events taken two at a time,
+    plus the sum of the probabilities of the events take three at a time, and so on.
+  }
+\end{propositionenv}
+
+\begin{equation}
+  P(E_{1}\cup E_{2}\cup...\cup E_{n})=\stackrel{n}{\sum_{i=1}}P(E_{i})-\sum_{i_{1}<i_{2}}P(E_{i_{1}}E_{i_{2}})+...+
+  (-1)^{r+1}\left[\sum_{i_{1}<i_{2}<...<i_{r}}P(E_{i_{1}}E_{i_{2}}...E_{i_{r}})\right]\label{eq:inclusionExclusion}
+\end{equation}
+
+The summation $\sum P(E_{i_{1}}E_{i_{2}}...E_{i_{r}})$ is taken over all $n \choose r$
+possible subsets of size $r$ of the set $\{1,2,...,n\}$.
+\mbox{}\\ \\
+Consider a ven-diagram, with 3 circles, $E_{1}$, $E_{2}$, and $E_{3}$.
+Places where 2 or more circles overlap indicate an outcome that is an intersection of multiple events $E_{i_{1}}...E_{i_{n}}$.
+These 3 events can be combined into 7 different outcomes altogether: $E_{1},~E_{2},~E_{3},~E_{1}E_{2},~E_{1}E_{3},~E_{2}E_{3}$, and $E_{1}E_{2}E_{3}$.
+The probability $P$ that one of $E_{1},~E_{2}$, or $E_{3}$ will occur, is
+\begin{align}
+  P & =E_{1}\cup E_{2}\cup E_{3}                   \\
+  P & \leq E_{1}+E_{2}+E_{3}\label{eq:overlapineq}
+\end{align}
+The right side of \eqref{eq:overlapineq} double counts the probabilities of $E_{1}E_{2}$, $E_{1}E_{3}$, and $E_{2}E_{3}$,
+and triple counts the probability of $E_{1}E_{2}E_{3}$.
+The trick is to define a method that will count all segments once, and only once.
+Knowing where it double counts, such a method might begin by subtracting the double counted events from $\sum E_{i}$:
+\begin{align*}
+  P & \leq E_{1}+E_{2}+E_{3}-(E_{1}E_{2}+E_{1}E_{3}+E_{2}E_{3})=P-E_{1}E_{2}E_{3}
+\end{align*}
+However, the event that was originally triple counted, $E_{1}E_{2}E_{3}$, was just triple subtracted!
+Nevertheless, the answer is easy to see at this point:
+\begin{align}
+  P=E_{1}+E_{2}+E_{3}-(E_{1}E_{2}+E_{1}E_{3}+E_{2}E_{3})+E_{1}E_{2}E_{3}
+\end{align}
+And that is exactly equation \eqref{eq:inclusionExclusion}, for $n=3$.
+
+\section{Sample Spaces Having Equally Likely Outcomes}
+\begin{example}{5a}{
+    If two dice are rolled, what is the probability that the sum of the upturned faces will equal 7
+  }
+\end{example}
+\begin{solution}{
+    \begin{align*}
+      S=\{(i,j):i,j=1,2,3,4,5,6\}
+    \end{align*}
+    The odds of rolling a 7 are
+    \begin{align*}
+      \frac{6}{36}=\frac{1}{6}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{5b}{
+    If 3 balls are “randomly drawn” from a bowl containing 6 white and 5 black balls,
+    what is the probability that one of the balls is white and the other two black?
+  }
+\end{example}
+\begin{solution} {
+    The probability that 1 white, and 2 black balls will be chosen is simply:
+    \begin{align*}
+      {{6 \choose 1}{5 \choose 2}\over{11 \choose 3}} = \frac{4}{11}
+    \end{align*}
+    Permutations don't need to be considered, as they cancel eachother out.
+    \begin{align*}
+      {{6 \choose 1}{5 \choose 2}3!\over{11 \choose 3}3!} = \frac{4}{11}
+    \end{align*}
+    For academic purposes, consider the probability as the total number of outcomes that satisfy the constraints
+    divided by the total number of outcomes (of course, this brings permutations back into the picture).
+    \begin{align*}
+      \frac{6!5!4!}{11!10!9!}=\frac{4}{11}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{5c}{
+    A committee of 5 is to be selected from a group of 6 men and 9 women. If the
+    selection is made randomly, what is the probability that the committee consists of
+    3 men and 2 women?
+  }
+\end{example}
+\begin{solution}{
+    \begin{align*}
+      {{6 \choose 3}{9 \choose 2}\over{15 \choose 5}}=\frac{240}{1001}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{5d}{
+    An urn contains balls, one of which is special. If of these balls are withdrawn
+    one at a time, with each selection being equally likely to be any of the balls that
+    remain at the time, what is the probability that the special ball is chosen?
+  }
+\end{example}
+\begin{solution} {
+    This is incredibly simple.  The balls in the urn are split into 2 groups: 1 group (the chosen ones, lol)
+    has $k$ of the $n$ balls, the other group (normies) has $n-k$ of the balls.  The probability that any 1 ball
+    will be in the group of $k$ balls is of course
+    \begin{align}
+      \frac{k}{n}
+    \end{align}
+    The probabilities of the 2 events account for all possible outcomes, so
+    \begin{align*}
+      P(Chosen)+P(NotChosen)=\frac{k}{n}+\frac{n-k}{n}=1
+    \end{align*}
+    Another way to view the probability that the special ball is chosen,
+    is as the probability of the union of discrete events in which it \textit{is} chosen.
+    Permutations are irrelevant, since each set of chosen balls has the same number of permutations ($k!$),
+    their permutations cancel each other out (i.e., when comparing x*100 to y*100, just divide by 100).
+    For each of these discrete events (involving $k$ choices of balls), one choice has to be the special ball.
+    That leaves $n-1\choose k-1$ ways to choose the remaining balls.
+    Therefore, the probability that the special ball is chosen is (again):
+    \begin{align*}
+      {{n-1 \choose k-1} \over {n \choose k}}=\frac{k}{n}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{5e} {
+    Suppose that $n+m$ balls, of which $n$ are red and $m$ are blue, are arranged in a
+    linear order such that all possible orderings are equally likely. If
+    we record the result of this experiment by listing only the colors of the successive
+    balls, show that all the possible results remain equally likely.
+  }
+\end{example}
+\begin{solution} {
+    This intuitively makes sense, as any one sequence of colors maps to $n!m!$ permutations of balls.
+    Therefore, every sequence of colors is equally likely. There are $(n+m)!$ permutations of balls,
+    and $\frac{(n+m)!}{n!m!}$ permutations of colors altogether.  The probability that one sequence of color is picked is:
+    \begin{align*}
+      \frac{n!m!}{(n+m)!}
+    \end{align*}
+  }
+\end{solution}
+
+\begin{example}{5f}{
+    A poker hand consists of 5 cards. If the cards have distinct consecutive values
+    and are not all of the same suit, we say that the hand is a straight. For instance,
+    a hand consisting of the five of spades, six of spades, seven of spades, eight of
+    spades, and nine of hearts is a straight. What is the probability that one is dealt a
+    straight?
+  }
+\end{example}
+\begin{solution} {
+    There are 13 values of cards, so a 5-card straight has 9 potential sequences of \textit{values} (if you don't count Ace-5).
+    Each of which has $4^5$ combinations of suits, as there are 4 suits per card, and 5 cards.
+    However, 4 of those combinations are not straights, they are straight flushes!
+    Therefore, there are $9(4^5 - 4)=36(4^4-1)=9216-32=9184$ different straights.
+    The only thing left to do is divide that by the number of total hands.
+    \begin{align*}
+      \frac{9184}{{52 \choose 5}}
+    \end{align*}
+  }
+\end{solution}
+\begin{example}{5g} {
+    A 5-card poker hand is said to be a full house if it consists of 3 cards of the same
+    denomination and 2 other cards of the same denomination (of course, different
+    from the first denomination). Thus, a full house is three of a kind plus a pair. What
+    is the probability that one is dealt a full house?
+  }
+\end{example}
+\begin{solution} {
+    \sidebyside {
+      Three-of-a-kind:
+      \begin{itemize}
+        \item 13 denominations per suit
+        \item $4\choose 3$ combinations of suits
+        \item $52\choose 2$ combinations of free cards
+      \end{itemize}
+    } {
+      \begin{adjustwidth}{20pt}{0pt}
+        Pair:
+        \begin{itemize}
+          \item 13 denominations per suit
+          \item $4\choose 2$ combinations of suits
+          \item $52\choose 3$ combinations of free cards
+        \end{itemize}
+      \end{adjustwidth}
+    }
+    \begin{align*}
+      Possible~hands={52\choose 5}
+    \end{align*}
+    \mbox{}\\ \\
+    A full house could be represented as the intersection of a 3-of-a-kind event, and pair-event.
+    \begin{align*}
+      Pair            = E_{2}     & ={13{4\choose 2}\over {52\choose 5}}               \\
+      Three~of~a~kind = E_{3}     & ={{4\choose 2}\over {52\choose 5}}                 \\
+      Full~house      =E_{3}E_{2} & ={13{4\choose 3}12{4\choose 2}\over {52\choose 5}} \\
+    \end{align*}
+    A full house and pair cannot occur in the same denomination,
+    so one of them has 12 possible denominations instead of 13.
+  }
+\end{solution}
+\begin{example}{5h}{
+    In the game of bridge, the entire deck of 52 cards is dealt out to 4 players. What
+    is the probability that
+    \begin{enumerate}
+      \item one of the players receives all 13 spades
+            \begin{solution}{
+                This is easy.  Of all $52\choose 13$ possible hands, only one has all 13 spades.
+                If $E_{i}$ is the event where the $i^{th}$ player draws the 13 spades, then
+                \begin{align*}
+                  P(E_{i})={1\over {52\choose 13}}, \{i~|~1\leq i\leq 4\}
+                \end{align*}
+                Therefore
+                \begin{align*}
+                  \stackrel{4}{
+                    \bigcup_{i=1}
+                  } E_{i}=
+                  \stackrel{4}{
+                    \sum_{i=1}
+                  } E_{i}={4\over {52 \choose 13}}
+                \end{align*}
+              }
+            \end{solution}
+      \item each player receives 1 ace
+            \begin{solution} {
+                There are 4 possibilities for one of the cards the first player can receive
+                (one must be one of 4 aces).
+                The remaining 12 cards can be any of the other 48 cards that aren't aces.
+                Therefore the first hand has $4{48\choose 12}$ possibilities.
+                \mbox{}\\ \\
+                The second player has 3 possibilities for one the cards (one of the other three aces),
+                and 45 possibilities for the other 12 (since they cannot be one of the other 2 aces).
+                The second players hand has $3{36\choose 12}$ possibilities.
+                \mbox{}\\ \\
+                Continuing this logic, leaves the third and fourth players with $2{24\choose 12}$,
+                and $1{12\choose 12}=1$ possibilities respectively (once 3 hands are realized, there is only one possiblity for the fourth).
+                Therfore, there are the following number of possibilities:
+                \begin{align*}
+                  {4{48\choose 12}3{36\choose 12}2{24\choose 12}\over {{52 \choose 13}{39\choose 13}{26\choose 13}}}=
+                  4!{{48\choose 12,12,12,12}\over {52\choose 13,13,13,13}}
+                \end{align*}
+              }
+            \end{solution}
+    \end{enumerate}
+  }
+\end{example}
+\begin{example}{5i}{
+    If $n$ people are present in a room, what is the probability that no two of them
+    celebrate their birthday on the same day of the year? How large need $n$ be so
+    that this probability is less than $1\over2$?
+  }
+\end{example}
+\begin{solution}{
+    $n$ people, and 365 days in the years (excluding leap years) means $365^{n}$ combinations of birthdays.
+    If no 2 people may have the same birthday, then that means the probability that the $i^{th}$ person's birthday
+    is different from the previous $i-1$ birthdays is $365-i\over 365$.  The probability that no 2 people have the same birthday is:
+    \begin{align*}
+      {365\choose n}\over 365^{n}
+    \end{align*}
+  }
+\end{solution}
+
+\begin{example}{5m}{
+  Suppose that each of $N$ men at a party throws his hat into the center of the room.
+The hats are first mixed up, and then each man randomly selects a hat. What is
+the probability that none of the men selects his own hat?
+}
+\end{example}
+\begin{solution} {
+  Let $E_i$ be the event where the $i^{th}$ man selects his hat.
+  By the \textbf{Inclusion Exclusion} principle:
+  \begin{align*}
+    P\left(\bigcup_{i=1}^NE_i\right)=\sum_{i=1}^NP(E_i)-\sum_{i_1<i_2}P(E_{i_1}E_{i_2})+...\\
+    +(-1)^{n+1}\sum_{i_1<i_2<...<i_n}P(E_{i_1}...E_{i_n})+...\\
+    +(-1)^{N+1}P(E_1...E_N)
+  \end{align*}
+  The probability that the any $n$ men select their own hats its
+  \begin{align*}
+    P(E_{i_1}...E_{i_n})=\frac{(N-n)!}{N!}
+  \end{align*}
+  The elements of the sum, $\sum\limits_{i_1<i_2...<i_n}P(E_{i_1}...E_{i_n})$,
+  form the set of all combinations of $n$ terms $E_i$, out of $N$ possible values.
+  Hence the sum has $N\choose n$ elements.  Therefore,
+  \begin{align*}
+    \sum_{i_1<i_2...<i_n}P(E_{i_1}...E_{i_n})=\frac{N!}{(N-n)!n!}\frac{(N-n)!}{N!}=\frac{1}{n!}
+  \end{align*}
+  \tocenter{$\implies$}
+  \begin{align*}
+    P\left(\bigcup_{i=1}^NE_i\right)=1-{1\over2!}+{1\over3!}-...+(-1)^{N+1}{1\over N!}
+  \end{align*}
+} 
+\end{solution}
+
+\begin{example}{5n} {
+  Compute the probability that if 10 married couples are seated at random at a
+round table, then no wife sits next to her husband.
+}
+\end{example}
+\begin{solution} {
+  Let $P(E_i)$ denote the event where the $i^{th}$ couple sits together, let $N=10$ denote the number of couples total.
+  \begin{align*}
+    P(E_{i_1}...E_{i_n})={2^n(19-n)!\over19!}
+  \end{align*}
+  By the inclusion exclusion principle \eqref{eq:inclusionExclusion}:
+  \begin{align*}
+    P\left(\bigcup_{1}^{n}E_i\right)=\stackrel{n}{\sum_{i=1}}P(E_{i})-\sum_{i_{1}<i_{2}}P(E_{i_{1}}E_{i_{2}})+...+
+  (-1)^{r+1}\left[\sum_{i_{1}<i_{2}<...<i_{r}}P(E_{i_{1}}E_{i_{2}}...E_{i_{r}})\right]\label{eq:inclusionExclusion}
+  \end{align*}
+  Therefore
+  \begin{align*}
+    {10\choose1}2^1{18!\over19!}-{10\choose1}2^1{18!\over19!}-{10\choose1}2^1{18!\over19!}-{10\choose1}2^1{18!\over19!}-{10\choose1}2^1{18!\over19!}-
+  \end{align*}
+}
+\end{solution}
+
+\section{Probability as a Continuous Set Function}
+\begin{definition}
+  $E_{n},n\geq 1$ is said to be an \textbf{increasing sequence} if
+  \begin{align*}
+    E_{1}\subset E_{2}\subset ...\subset E_{n}\subset E_{n+1}...
+  \end{align*}
+\end{definition}
+
+\begin{definition}
+  $E_{n},n\geq 1$ is said to be a \textbf{decreasing sequence} if
+  \begin{align*}
+    E_{1}\supset E_{2}\supset ...\supset E_{n}\supset E_{n+1}...
+  \end{align*}
+\end{definition}
+
+\begin{proposition}
+  If $\{E_n,n\geq 1\}$ is either an increasing or decreasing sequence of events, then
+  \begin{align}
+    \lim_{n\to \infty}P(E_{n})=P(\lim_{n\to \infty}E_{n})
+  \end{align}
+\end{proposition}
+
+\begin{example}{6a}{
+  Suppose there is an infinitely large urn, and an infinite collection of balls,
+  labeled $b_{1},b_{2},...,b_{\infty}$.  At 1 minute to 12pm, balls numbered
+  1 through 10 are placed in the urn and $b_{10}$ is withdrawn.  At $1\over2$ minute
+  to 12pm, $b_{11},...,b_{20}$ are placed in the urn, and $b_{20}$ is withdrawn.
+  This process continues until 12 pm (i.e., $\infty$ repititions).  How many balls
+  are in the urn at 12pm?  $\infty$ of course!
+  \paragraph{Suppose} instead that $b_{1}$ is withdrawn after $b_{1}...b_{10}$ are
+  placed in the urn, and $b_{2}$ is withdrawn after $b_{11},...,b_{20}$ are placed in the urn,
+  then $b_{3}$ and so forth.  How many balls are in the bucket at 12pm in this case?  None!
+  This must be so, because every ball will \textit{eventually} be removed, and what does
+  $\infty$ mean if not \textit{all things eventual}?
+  \paragraph{For the \$64,000 question} suppose that a ball is \textit{randomly} selected
+  to be withdrawn from the urn after each set of 10 balls is deposited.  Assume all balls in the urn
+  are equally likely to be picked in the random selection.  How many balls are in the urn at 12pm then?
+}
+\end{example}
+
+\begin{solution} {
+  Let the outcome that $b_{i}$ remains in the bucket after $j$ withdrawals be $E_{i,j}$.
+  \begin{align*}
+    P(\bigcap_{j=1}^{n}E_{1,j})=\frac{9}{10}\frac{18}{19}\frac{27}{28}...\frac{9n}{9n+1}
+  \end{align*}
+
+  Note that $E_{i,j}\{i,j~|~\forall \mathbb{Z}^{+},\forall \mathbb{Z}^{+}\}$ is a \textbf{decreasing sequence}.
+  \begin{align*}
+    E_{i,j+1}\supset E_{i,j}\implies \lim_{n\to\infty}E_{i,n}&=\bigcap_{j=1}^{\infty}E_{i,j}\\
+    E_{i,\infty}&=\bigcap_{j=1}^{\infty}E_{i,j}\\
+    E_{1,\infty}&=\bigcap_{j=1}^{\infty}E_{1,j}\\
+  \end{align*}
+  Thus the probability that $b_{1}$ is withdrawn after $\infty$ withdrawals is
+  \begin{align*}
+    P(E_{1,\infty})&=P\left(\bigcap_{j=1}^{\infty}E_{1,j}\right)\\
+    P(E_{1,\infty})&=\lim_{j\to\infty}P(E_{1,j})\\
+    P(E_{1,\infty})&=\frac{9}{10}\frac{18}{19}\frac{27}{28}...\frac{9n}{9n+1}=0\\
+  \end{align*}
+}
+\end{solution}
+
+\section{Probability as a Measure of Belief}
+\begin{example}{7b}{
+  Suppose that in a 7-horse race, you believe that each of the first 2 horses has a
+  20 percent chance of winning, horses 3 and 4 each have a 15 percent chance,
+  and the remaining 3 horses have a 10 percent chance each. Would it be better
+  for you to wager at even money that the winner will be one of the first three
+  horses or to wager, again at even money, that the winner will be one of the
+  horses 1, 5, 6, and 7?
+}
+\end{example}
+\begin{solution} {
+  It would be better to wager that the winner will be one of the first 3 horses,
+  as
+  \begin{align*}
+    \left[P(E_{first~3})=0.55\right]\geq \left[P(E_{other~4})=0.5\right]
+  \end{align*}
+}
+\end{solution}
+
+\end{document}

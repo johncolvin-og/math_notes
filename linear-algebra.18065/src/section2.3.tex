@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+\title{Linear Algebra 18065}
+\date{2021-02-03}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+
+\newcommand{\lnbk}{\mbox{\\ \\ \\}}
+
+\newcommand{\exref}[1]{ (ex \textbf{#1}) }
+
+\newenvironment{example}[2]{
+  \header{Example #1}
+  \begin{adjustwidth}{\exampleIndent}{2pt} {
+    {#2}
+  }
+  \end{adjustwidth}
+}
+
+\newenvironment{exampleOrig}[2]{
+  \noindent\fbox{
+    \parbox{\textwidth}{
+  \large
+  \textbf{Example #1}
+  \normalsize
+  {#2}
+  }
+  }
+}
+
+\newenvironment{textbox}
+{\begin{center}
+  \begin{tabular}{|p{0.9\textwidth}|}
+    \hline \\
+    }
+    {
+    \\\\\hline
+  \end{tabular}
+\end{center}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+% \newenvironment{proposition}[1] {
+%   \begin{flushleft}
+%   \large
+%   \textbf{Proposition #1}
+%   \end{flushleft}
+% }
+\definecolor{propbg}{RGB}{180,220,255}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\begin{document}
+\maketitle
+\section{Best $M$ in $A\approx CMR$}\zlabel{sec:one}
+Given the matricies $A$, $C$, and $R$, consider the following:
+\begin{itemize}
+  \item $Q_C$ contains an orthonormal basis for the column space of C
+  \item $Q_C^\perp$ contains an orthonormal basis for the left null space of C
+  \item $Q_C Q_C^T$ is the projection matrix onto that subspace $C(A)$
+  \item $Q_R$ contains an orthonormal basis for the row space of R
+  \item $Q_R^\perp$ contains an orthonormal basis for the null space of R
+  \item $Q_R Q_R^T$ is the projection matrix onto that subspace $C(R^T)$
+        \begin{equation}
+          \left[Q_C Q_C^\perp\right]^T(A-CMR)\left[Q_R Q_R^\perp\right]=
+          \begin{bmatrix}
+            \hat{A} & X \\
+            Y       & Z
+          \end{bmatrix}
+          -
+          \begin{bmatrix}
+            \hat{C}M\hat{R} & 0 \\
+            0               & 0
+          \end{bmatrix}
+        \end{equation}
+\end{itemize}
+\end{document}

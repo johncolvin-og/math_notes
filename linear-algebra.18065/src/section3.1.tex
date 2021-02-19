@@ -1,0 +1,410 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{stackrel}
+\usepackage[colorlinks]{hyperref}
+\usepackage[user,titleref]{zref}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{scrextend}
+\usepackage{lipsum}
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{multicol}
+\input{mystyle.sty}
+
+\title{Linear Algebra 18.065: Changes in $A^{-1}$}
+\date{2021-02-04}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+\begin{fact}
+  \text{The inverse of $M=I-uv^T$ is}
+  \begin{equation}
+    M^{-1}=I+{uv^T\over 1-v^Tu}
+  \end{equation}
+\end{fact}
+% &=I-uv^T+{uv^T\over 1-v^Tu}-u\left(I+{v^Tu\over 1-v^Tu}\right)v^T
+\begin{proof}
+  \begin{flushleft}
+    \begin{align*}
+      M(M^{-1}) & =(I-uv^T)\left(I+{uv^T \over 1-v^Tu}\right) \\
+                & =I-uv^T+{(I-uv^T)uv^T\over 1-v^Tu)}         \\
+      % &=I-uv^T+\left[{(I-uv^T)uv^T\over 1-v^Tu)}={uv^T-uv^Tuv^T\over 1-v^Tu}\right]\\
+                & =I-uv^T+{uv^T-uv^Tuv^T\over 1-v^Tu}         \\
+                & =I-uv^T+{u(I-v^Tu)v^T\over 1-v^Tu}          \\
+                & =I-uv^T+uv^T                                \\
+                & =I
+    \end{align*}
+  \end{flushleft}
+\end{proof}
+
+\begin{axiom}
+  Extended Matrix $E=
+    \begin{bmatrix}
+      I   & u \\
+      v^T & 1
+    \end{bmatrix}$
+  has determinant $D=1-v^Tu$
+\end{axiom}
+\begin{proof}
+  Recall that the determinant of an $nxn$ square matrix is the sum of the $n!$
+  terms that are each products $a_{1,i_1}a_{2,i_2}...a_{n,i_n}$ where
+  $i_{1}\neq i_{2}\neq ... \neq i_{n}$ (each multiplicand comes from a unique row and column).  All but one term that involve a
+  particular multiplicand $u_i$ are $0$ (because the matrix is sparse, and has
+  all zeros except along the main diagonal, the last row, and the last column).
+  The only term with such a multiplcand that's $\neq 0$ is the one that takes diagnonal
+  entry from every row, except on row $i$ and the last row.  If the multiplicand $u_i$
+  is fixed, and every other row chooses $a_{j,j}$ (the $1$ on the diagnonal), the last row
+  has only one candidate left: $v^T_i$.  Of course, the $1$'s along the diagnonal form
+  a non-zero term as well: $1$.  Therefore
+  \begin{equation}
+    \det{E}=1-v^Tu
+  \end{equation}
+  \begin{align*}
+    E_4 & =
+    \begin{bmatrix}
+      1     & 0     & 0     & u_1 \\
+      0     & 1     & 0     & u_2 \\
+      0     & 0     & 1     & u_3 \\
+      v^T_1 & v^T_2 & v^T_3 & 1
+    \end{bmatrix}
+  \end{align*}
+  Find $E_4^{-1}$ through elimination. Subtract $v^T$ from the last row to
+  cancel it out
+  \begin{align*}
+    \stackrel{Elim}{
+      \begin{bmatrix}
+        1      & 0      & 0      & u_1 \\
+        0      & 1      & 0      & u_2 \\
+        0      & 0      & 1      & u_3 \\
+        -v_1^T & -v_2^T & -v_3^T & 1
+      \end{bmatrix}
+    }
+    \stackrel{E}{
+      \begin{bmatrix}
+        1     & 0     & 0     & u_1 \\
+        0     & 1     & 0     & u_2 \\
+        0     & 0     & 1     & u_3 \\
+        v^T_1 & v^T_2 & v^T_3 & 1
+      \end{bmatrix}
+    }
+    =
+    \begin{bmatrix}
+      1 & 0 & 0 & u_1    \\
+      0 & 1 & 0 & u_2    \\
+      0 & 0 & 1 & u_3    \\
+      0 & 0 & 0 & 1-v^Tu
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+      I & u \\
+      0 & D
+    \end{bmatrix} \\
+    \implies
+    E_4^{-1}=(Elim)^{-1}
+    \begin{bmatrix}
+      I & u \\
+      0 & D
+    \end{bmatrix}
+  \end{align*}
+\end{proof}
+\begin{formula}{Sherman-Morrison-Woodbury}
+  \begin{align}
+    M      & =A-UV^T\implies\nonumber                   \\
+    M^{-1} & =A^{-1}+A^{-1}U(I-V^TA^{-1})^{-1}V^TA^{-1}
+  \end{align}
+\end{formula}
+
+\begin{proof}
+  \begin{tcolorbox}[
+      colback=white,colframe=black,width=14cm,arc=3mm, auto outer arc]
+    \begin{align*}
+      \begin{bmatrix}
+        I          & 0 \\
+        -V^TA^{-1} & I
+      \end{bmatrix}
+      \begin{bmatrix}
+        A   & U \\
+        V^T & I
+      \end{bmatrix}
+       & =
+      \begin{bmatrix}
+        A & U            \\
+        0 & I-V^TA^{-1}U
+      \end{bmatrix} \\
+      And                        \\
+      \begin{bmatrix}
+        A & U            \\
+        0 & I-V^TA^{-1}U
+      \end{bmatrix}^{-1}
+       & =
+      \begin{bmatrix}
+        A^{-1} & -A^{-1}U(I-V^TA^{-1}U)^{-1} \\
+        0      & (I-V^TA^{-1}U)^{-1}
+      \end{bmatrix}
+      \\ \implies\\
+      \begin{bmatrix}
+        A   & U \\
+        V^T & I
+      \end{bmatrix}^{-1}
+       & =
+      \begin{bmatrix}
+        A^{-1} & -A^{-1}U(I-V^TA^{-1}U)^{-1} \\
+        0      & (I-V^TA^{-1}U)^{-1}
+      \end{bmatrix}
+      \begin{bmatrix}
+        I          & 0 \\
+        -V^TA^{-1} & I
+      \end{bmatrix} \\
+       & =
+      \begin{bmatrix}
+        A^{-1}+A^{-1}UC^{-1}V^TA^{-1} & -A^{-1}UC^{-1} \\
+        -C^{-1}V^TA^{-1}              & C^{-1}
+      \end{bmatrix}
+    \end{align*}
+  \end{tcolorbox}
+  \begin{tcolorbox}[
+      colback=white,colframe=black,width=14cm,arc=3mm, auto outer arc]
+    \begin{align*}
+      \begin{bmatrix}
+        I & -U \\
+        0 & I
+      \end{bmatrix}
+      \begin{bmatrix}
+        A   & U \\
+        V^T & I
+      \end{bmatrix}
+       & =
+      \begin{bmatrix}
+        A-UV^T & 0 \\
+        V^T    & I
+      \end{bmatrix} \\
+      \implies
+      \begin{bmatrix}
+        M^{-1}     & 0 \\
+        -V^TM^{-1} & I
+      \end{bmatrix}
+      \begin{bmatrix}
+        M   & 0 \\
+        V^T & I
+      \end{bmatrix}
+       & =I                      \\
+      \implies
+      \begin{bmatrix}
+        M^{-1}     & 0 \\
+        -V^TM^{-1} & I
+      \end{bmatrix}
+      \begin{bmatrix}
+        I & -U \\
+        0 & I
+      \end{bmatrix}
+       & =
+      \begin{bmatrix}
+        M^{-1}     & -M^{-1}U     \\
+        -V^TM^{-1} & V^TM^{-1}U+I
+      \end{bmatrix} \\
+      \implies
+      \begin{bmatrix}
+        A^{-1}+A^{-1}UC^{-1}V^TA^{-1} & -A^{-1}UC^{-1} \\
+        -C^{-1}V^TA^{-1}              & C^{-1}
+      \end{bmatrix}
+       & =
+      \begin{bmatrix}
+        M^{-1}     & -M^{-1}U     \\
+        -V^TM^{-1} & V^TM^{-1}U+I
+      \end{bmatrix}
+    \end{align*}
+    The (1,1) blocks imply
+    \begin{align}
+      \implies
+      M^{-1}=A^{-1}+A^{-1}UC^{-1}V^TA^{-1} & -A^{-1}UC^{-1}
+    \end{align}
+  \end{tcolorbox}
+\end{proof}
+
+\begin{axiom}
+  \textbf{Key Identities}
+  \begin{equation}
+    B(I_m+AB)=(I_n+BA)B
+  \end{equation}
+  \begin{equation}
+    \label{eq:key_identity_2}
+    B(I_m+AB)^{-1}=(I_n+BA)^{-1}B
+  \end{equation}
+  \begin{equation}
+    A^T(AA^T+\lambda I_n)^{-1}=(A^TA+\lambda I_m)^{-1}A^T
+  \end{equation}
+  \begin{equation}
+    U(I_k-V^TU)=(I_n-UV^T)U
+  \end{equation}
+  \begin{equation}
+    B^{-1}-A^{-1}=B^{-1}(A-B)A^{-1}
+  \end{equation}
+\end{axiom}
+
+\begin{fact}
+  If $A$ is $mxn$ and $B$ is $nxm$ then \eqref{eq:key_identity_2} holds true because
+  $AB$ and $BA$ have the same eigenvalues.  This means that $AB$ is invertible exactly when
+  $BA$ is invertible ($I+AB$ and $I+BA$ are not invertible when $\lambda=-1$, in which $0$
+  would be an eigenvalue of both)\\ \\
+  \begin{proof}
+    \begin{align*}
+      ABx    & =\lambda x    \\
+      B(ABx) & =B(\lambda x) \\
+      (BA)Bx & =\lambda Bx
+    \end{align*}
+  \end{proof}
+\end{fact}
+
+\begin{axiom}
+  \textbf{The Kalman Filter}\\ \\
+  \begin{tabular}{|m{4.5cm}|m{6cm}}
+    \hline \\
+    \parbox[t]{5cm}{
+      1. Original ($A~0$)             \\
+      2. State Update ($-I~I$)        \\
+      3. Measurement ($0~r$)
+    }&
+    \parbox[t]{6cm}{
+      $A_{new}=
+        \begin{bmatrix}
+          A  & 0 \\
+          -I & I \\
+          0  & r
+        \end{bmatrix}
+        \begin{bmatrix}
+          x_{old} \\
+          x_{new}
+        \end{bmatrix}~~~~=
+        \begin{bmatrix}
+          b         \\
+          v\Delta t \\
+          b_{m+1}
+        \end{bmatrix}$
+    }                               \\ \\
+    &
+    $~~~~~~~=\begin{bmatrix}
+      Ax_{old}\\
+      -x_{old}\\
+      0
+    \end{bmatrix}+
+    \begin{bmatrix}
+      0\\
+      x_{new}\\
+      rx_{new}
+    \end{bmatrix}=
+    \begin{bmatrix}
+      b\\
+      v\Delta t\\
+      b_{m+1}
+    \end{bmatrix}$
+    \\
+    \hline
+    \textbf{K=Kalman gain matrix} &
+    \begin{equation}
+      \label{eq:kalman_update}
+      \hat{x}_{new}=\hat{x}_{state}+K(b_{m+1}-r\hat{x}_{state})
+    \end{equation}
+    \\
+    \hline
+  \end{tabular}
+  \\ \\
+  \parbox[m]{10cm}{
+    \begin{itemize}
+      \item Note that $r$ is a \textit{row vector} with the same number of columns as $A$
+      \item Instead of simply adding the new equation to $Ax=b$, two equations are added: the new measurement,
+      and the prediction.
+      \item Both new equations are part of the projection source, and the solution to $A^TA\hat{x}=b$
+      minimizes the magnitude of the error $e=b-A^Tb$ 
+    \end{itemize}
+    The equation above \eqref{eq:kalman_update} integrates the update in 2 components:
+    \begin{enumerate}[nolistsep]
+      \item Update via recent measurements $rx_{new}=b_{m+1}$
+      \item Update via estimation from prior measurement (as a function of the previous state) $x_{new}-x_{old}=v\Delta t$
+    \end{enumerate}
+    Since neither is assumed to be $100\%$ accurate, a \textit{weighted avg} of the 2 updates is incorporated into
+    $\hat{x}_{new}$.  If the measurements agree with one another, then $b_{m+1}=2$
+  }
+\end{axiom}
+
+\begin{axiom}
+  \textbf{Quasi-Newton Update Methods}\\
+  \begin{itemize}
+    \item Used to find approx solutions to \begin{equation}\label{eq:quasi_newton_fxzero}f(x)=0\end{equation}
+    \item \eqref{eq:quasi_newton_condition} leads to \eqref{eq:quasi_newton_xnew} as $f(x_{new})\approx 0$ (mentioned above)
+  \end{itemize}
+  \begin{align}
+    J_{ik}&={\partial{f_i}\over\partial{x_k}}\\
+    \label{eq:quasi_newton_condition}
+    J_{new}(x_{new}-x_{old})&=f_{new}-f_{old}\\
+    \label{eq:quasi_newton_xnew}
+    x_{new}&=x_{old}-J(x_{old})^{-1}f(x_{old})
+  \end{align}
+  \begin{proof}
+    \begin{align*}
+      \eqref{eq:quasi_newton_condition}&\implies x_{new}-x_{old}=J(f_{new}-f_{old})^{-1}\\
+      \eqref{eq:quasi_newton_fxzero}&\implies x_{new}-x_{old}=J(-f_{old})^{-1}\\
+      &\implies x_{new}=x_{old}-J(f_{old})^{-1}
+    \end{align*}
+  \end{proof}
+\end{axiom}
+
+\begin{fact}
+  When the solution $w$ to $Aw=b$ is known, as is the solution $z$ to $Az=u$,
+  the solution $x$ to $(A-uv^T)x=b$ is:
+  \begin{equation}
+    x=w+{v^Tw\over 1-v^Tz}z
+  \end{equation} 
+  \begin{proof}
+    \begin{align*}
+      Ax-uv^Tx&=b\\
+      Ax-Azv^Tx&=b=Aw\\
+      x-zv^Tx&=w\\
+      (I-zv^T)x&=w\\
+      x&=(I-zv^T)^{-1}w\\
+      x&=\left(I+{zv^T\over 1-v^Tz}\right)w\\
+      x&=w+{v^Tw\over 1-v^Tz}z
+    \end{align*}
+  \end{proof}
+\end{fact}
+% {
+%   \setlength{\fboxrule}{5pt}
+%   \fcolorbox{black}{gray!30}{My text}
+%   \setlength{\fboxrule}{1pt}
+
+%   \fcolorbox{black}{gray!30}{My text}
+% }
+% using a tabular with \parbox inside \framebox
+\noindent\begin{tabular}{p{.45\textwidth}p{.45\textwidth}}
+  \framebox{\parbox[t]{.4\textwidth}{\lipsum[1]}} & \framebox{\parbox[t]{.4\textwidth}{
+      \lipsum[1]
+      \begin{enumerate}[nolistsep]
+        \item box2-item1
+        \item box2-item2
+        \item box2-item3
+      \end{enumerate}}}
+\end{tabular}
+
+\newpage
+
+% now, using multicol and framed
+\begin{multicols}{2}
+  \begin{framed}
+    \lipsum[1]
+  \end{framed}
+  \begin{framed}
+    \lipsum[1]
+    \begin{enumerate}[nolistsep]
+      \item box2-item1
+      \item box2-item2
+      \item box2-item3
+    \end{enumerate}
+  \end{framed}
+\end{multicols}
+
+\end{document}

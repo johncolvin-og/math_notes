@@ -1,0 +1,283 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{changepage}
+\usepackage{xcolor}
+\usepackage[user,titleref]{zref}
+\usepackage{xcolor}
+\colorlet{linkequation}{red}
+\colorlet{linktheo}{green}
+\usepackage[colorlinks]{hyperref}
+
+\title{Linear Algebra Basics}
+\date{2021-02-04}
+
+\newcommand{\exampleIndent}{20pt}
+\newcommand{\solutionIndent}{20pt}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\header}[1]{
+  \begin{flushleft}
+    \large
+    \textbf{#1}
+  \end{flushleft}
+}
+
+\newcommand{\lnbk}{\mbox{\\ \\ \\}}
+
+\newcommand{\exref}[1]{ (ex \textbf{#1}) }
+
+\newcommand*{\refequation}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linkequation,
+      linkbordercolor=linkequation,
+    }%
+    \ref{#1}%
+  \endgroup
+}
+\newenvironment{example}[2]{
+  \header{Example #1}
+  \begin{adjustwidth}{\exampleIndent}{2pt} {
+    {#2}
+  }
+  \end{adjustwidth}
+}
+
+\newenvironment{textbox}
+{\begin{center}
+  \begin{tabular}{|p{0.9\textwidth}|}
+    \hline \\
+    }
+    {
+    \\\\\hline
+  \end{tabular}
+\end{center}
+}
+
+\newenvironment{solution}[1] {
+\begin{flushleft}
+  \large
+  \textbf{Solution}
+\end{flushleft}
+\begin{adjustwidth}{\solutionIndent}{2pt} {
+    {#1}
+  }
+\end{adjustwidth}
+}
+
+\definecolor{propbg}{RGB}{180,220,255}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\makeatletter
+\newcommand*{\inlineequation}[2][]{%
+  \begingroup
+    % Put \refstepcounter at the beginning, because
+    % package `hyperref' sets the anchor here.
+    \refstepcounter{equation}%
+    \ifx\\#1\\%
+    \else
+      \label{#1}%
+    \fi
+    % prevent line breaks inside equation
+    \relpenalty=10000 %
+    \binoppenalty=10000 %
+    \ensuremath{%
+      % \displaystyle % larger fractions, ...
+      #2%
+    }%
+    ~\@eqnnum
+  \endgroup
+}
+\makeatother
+
+\begin{document}
+\maketitle
+\section{AB is in C(A), and R(B)}
+\begin{itemize}
+  \item Of course, it's easy to see that $AB$ is in $C(A)$, since each column
+    in $B$ represents a combination of columns in $A$ (in the context of the
+    product $AB$)
+  \item However, harder to see is that each row in $A$ represents a combination
+    of the rows in $B$
+  \begin{align*}
+    A&=
+    \begin{bmatrix}
+      a_{1,1}&a_{1,2}\\
+      a_{2,1}&a_{2,2}\\
+      a_{3,1}&a_{3,2}
+    \end{bmatrix}
+    &=
+    \begin{bmatrix}
+      \vec{a_{r1}}\\
+      \vec{a_{r2}}\\
+      \vec{a_{r3}}
+    \end{bmatrix}\\
+    B&=
+    \begin{bmatrix}
+      b_{1,1}&b_{1,2}&b_{1,3}\\
+      b_{2,1}&b_{2,2}&b_{2,3}
+    \end{bmatrix}
+    &=
+    \begin{bmatrix}
+      \vec{b_{c1}}&\vec{b_{c2}}
+    \end{bmatrix}\\
+  \end{align*}
+  \begin{align}
+    AB&=\nonumber
+    \begin{bmatrix}
+      a_{1,1}&a_{1,2}\\
+      a_{2,1}&a_{2,2}\\
+      a_{3,1}&a_{3,2}
+    \end{bmatrix}
+    \begin{bmatrix}
+      b_{1,1}&b_{1,2}&b_{1,3}\\
+      b_{2,1}&b_{2,2}&b_{2,3}
+    \end{bmatrix}\\
+    AB&=
+    \begin{bmatrix}
+      a_{1,1}(b_{r1})+a_{2,1}(b_{r2})+a_{3,1}(b_{r3})\\
+      a_{1,2}(b_{r1})+a_{2,2}(b_{r2})+a_{3,2}(b_{r3})
+    \end{bmatrix}
+    % &=
+    % \begin{bmatrix}
+    %   \vec{a_{c1}}&\vec{a_{c2}}
+    % \end{bmatrix}
+    % \begin{bmatrix}
+    %   \vec{b_{r1}}\\
+    %   \vec{b_{r2}}
+    % \end{bmatrix}\\
+  \end{align}
+  \item Clearly, the rows of $AB$ are in the rowspace of $B$
+\end{itemize}
+
+\textbf{Normed Vector Space}
+\begin{enumerate}
+  \item Is nonnegative: \inlineequation{||\vec{x}||\geq 0~:\forall \vec{x}}
+  \item Is positive on nonzero vectors:
+    \begin{align}
+      ||\vec{x}||=0 \Longleftrightarrow b
+    \end{align}
+  \item
+  \begin{align}
+    ||\alpha \vec{x}||=|\alpha|~||\vec{x}||~:~\{\vec{x}~|~\forall \vec{x},~\alpha~|~\mathbb{R}\}
+  \end{align}
+  \item The triangle inequality holds:
+  \begin{align}
+    ||\vec{x}+\vec{y}||\leq ||\vec{x}||+||\vec{y}||
+  \end{align}
+    
+\end{enumerate}
+
+\section{Ring}
+\begin{itemize}
+  \item A \textbf{set} equipped with two binary operations: addition, and multiplication
+  (the former must be commutative, the latter must be associative and distrubutive.
+  \item An \textbf{Albelian Group} whose operation is called \textbf{addition}.
+  \item Algebraic structure that generalizes fields
+\end{itemize}
+
+\section{Metric Space}
+\begin{itemize}
+  \item consists of a \textit{set}, and a \textit{metric}
+  \item the \textit{metric} is a function that defines a distance between
+  any two members (e.g., points) of the \textit{set}
+  \begin{enumerate}
+    \item $|A-B|\geq 0$ (distance is always positive)
+    \item $|A-B|=|B-A|$ (distance is the abs value)
+    \item $A-B=0\leftrightarrow A=B$ (no distance between points means they are the same point)
+    \item $|A-B|\leq |A-C|+|C-B|$ (the shortest path between two points is a \textquoteleft straight line\textquoteright)
+  \end{enumerate}
+  \item A \textbf{Complete Metric Space} is one which has no holes
+  \begin{itemize} 
+    \item Every \textbf{Cauchy Sequence} within the space has a limit that is also in the space,
+    or if every Cauchy sequence in that spaces converges in that space
+  \end{itemize} 
+\end{itemize}
+\section{Proofs}
+
+\myparagraph{Eigenvectors for distinct eigenvalues must be Independent}{
+  Suppose 2 eigenvectors are not independent, so
+  \begin{align}
+    \label{eq:dep_eigenvec_sum}
+    c_1x_1+c_2x_2=0~:~\{c_1,c_2~|~\in \mathbb{R}\}
+  \end{align}
+  Furthermore,
+  \begin{align}
+    A(c_1x_1+c_2x_2)=c_1\lambda_1 x_1+c_2\lambda_2 x_2=0
+  \end{align}
+  Multiply \ref{eq:dep_eigenvec_sum} by $\lambda_2$ to get
+  \begin{align*}
+    \label{eq:dep_eigenvec_suma}
+    c_1\lambda_2x_1+c_2\lambda_2x_2=0
+  \end{align*}
+  Add \ref{eq:dep_eigenvec_sum} and \ref{eq:dep_eigenvec_suma} to get $0+0=0$:
+  \begin{align*}
+    c_1\lambda_1 x_1+c_2\lambda_2 x_2-(c_1\lambda_2 x_1+c_2\lambda_2 x_2)&=0\\
+    c_1\lambda_1 x_1-c_1\lambda_2 x_1+(c_2\lambda_2 x_2-c_2\lambda_2 x_2)&=0\\
+    (\lambda_1-\lambda_2)c_1x_1&=0\\
+    [c_1x_1 \neq 0] \implies \lambda_1&=\lambda_2
+  \end{align*}
+  The proof was demonstrated for a simple case of dependent eigenvectors:\newline
+  $c_1x_1+c_2x_2=0$, but easily extends to the generic case:
+  \begin{align*}
+    c_1x_1+...+c_nx_n=0
+  \end{align*}
+  For convenience sake (in terms of notation), multiply by $\lambda_n$ so the reduced series
+  runs from $c_1,...,c_{n-1}$ and $\lambda_1,...,\lambda_{n-1}$ (no gap in the middle)
+  \begin{align*}
+    c_1\lambda_1 x_1+...+c_n\lambda_n x_n-(c_1\lambda_i x_1+...+c_n\lambda_i x_n)&=0\\
+    % (\lambda_1-\lambda_n)c_1\lambda_1 x_1+...+(\lambda_{n-1}-\lambda_n)c_{n-1} x_{n-1}+(c_n\lambda_n x_n-c_n\lambda_n x_n)&=0\\
+    (\lambda_1-\lambda_n)c_1 x_1+...+(\lambda_{n-1}-\lambda_n)c_{n-1} x_{n-1}&=0\\
+    \gamma_1c_1 x_1+...+\gamma_{n-1}c_{n-1} x_{n-1}&=0
+  \end{align*}
+  Proof of the simple case prooves the generic case by induction, as $n$ vectors $c_i\lambda_i x_i$
+  became $n-1$ vectors $c_i\gamma_i x_i$ (this reduction could be continued until only $2$ vectors remain).
+}
+
+\myparagraph{Symmetric Matrices have Orthogonal eigenvectors}{
+  \newline
+  Let $x$ and $y$ be eigenvectors of a symmetric matrix $S$.
+  \begin{align*}
+    Sx=\lambda_1x,~Sy=\lambda_2y,~\lambda_1\neq\lambda_2\\
+    x^TSy=x^T\lambda_2y=(y^TSx)^T=\lambda_1x^Ty\\
+    \implies \lambda_2x^Ty &=\lambda_1x^Ty\\
+    \implies x^Ty &=0
+  \end{align*}
+}
+
+\section{Determinant}
+\begin{itemize}
+  \item The inverse of a square matrix $A$ is its cofactor matrix transpose
+  divided by the determinant
+  \begin{align}
+    A^{-1}={C^T\over \det{A}}
+  \end{align}
+\end{itemize}
+\myparagraph{Proof}{
+  \newline
+  Recall that the determinant is \textit{linear} with respect to rows and columns,
+  and that the determinant is zero whenever two columns are equal.\newline
+  \textbf{Laplace Expansion} expresses the determinant as a linear function of
+  any row or column
+  \begin{align}
+    det(A)&=C_1a_{1,j}+...+C_na_{n,j}=L_{(j)}^Ta_j
+  \end{align}
+  Applying any other column to $L_(j)$ would in effect be duplicating that column
+  and thus produce a determinant of zero.
+  \begin{align}
+    L^T_{(i)}a_j=0~,~i\neq j
+  \end{align}
+  Therefore
+  \begin{align}
+    C^TA=\det(A)I
+  \end{align}
+}
+\end{document}

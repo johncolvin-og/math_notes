@@ -1,0 +1,208 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage{scrextend}
+\usepackage{enumitem}
+\input{mystyle.sty}
+
+\newcommand\VRule[1][\arrayrulewidth]{\vrule width #1}
+\title{Linear Algebra 18.065: Split Algorithms for $\ell^1$ Optimization}
+\date{2021-02-17}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+
+\textbf{Sylvester Equation}
+\begin{equation}
+  AX-XB=C
+\end{equation}
+\vpush
+\sectionbreak
+\section{Split Algorithms for $\ell^2+\ell^1$}
+When $Ax=b$ has many solutions (perhaps $A$ has more columns than rows,
+$m<<n$), the \textit{optimal} solution is usually the one with the most zeros
+(this generally reduces the number of arithmetic operations needed to apply the
+solution in an algorithm).
+\\ \\
+The solution(s) with the most zeros minimize(s) the $\ell^0$ norm.  However,
+since this isn't a \textit{real} norm (non-linear, non-distributive, etc.),
+minimizing it isn't typically feasible.  A more feasible approach is to
+minimize the $\ell^1$ norm.
+\\ \\
+The $\ell^1$ norm:
+\begin{itemize}
+  \item is a convex function of $x$
+  \item is piecewise linear (unlike $\ell^2$, and
+        all other $\ell^p$ norms except $||x||_\infty=\max{|x_i|}$)
+  \item has vertices on the basis axes (the vectors with
+        $||x_1||=|x_1|+|x_2|\leq 1$ fill the diamond with corners at $\pm i$ and $\pm j$
+  \item solutions that just contact those vertices thus consist of basis vectors,
+        which have only one non-zero element
+\end{itemize}
+\begin{formula}{Basis Pursuit}
+  \textbf{Minimize}~~~~\inlineequation[eq:basispursuit]{
+    ||x_1||=|x_1|+...+|x_n|~~\textbf{subject to }Ax=b~~~~~~~~~~~~~~~
+  }
+\end{formula}
+\myparbox{
+  A related problem allows for noise in $Ax=b$, as enforcing the constraint too strictly
+  may lead to an \textit{overfitted} or suboptimal solution (e.g., too many non-zeros!).
+  The \textbf{LASSO} approach addresses these issues.
+}\\
+\begin{formula}{LASSO(in statistics)}
+  \begin{flushright}
+    \begin{align}
+                   & \textbf{Minimize}~~{1\over 2}||Ax-b||^2_2+\lambda||x_1||_1          \\
+      (\text{or})~ & \textbf{Minimize}~~{1\over 2}||Ax-b||^2_2~\text{with}~||x||_1\leq t
+    \end{align}
+  \end{flushright}
+\end{formula}
+\vpush
+\myparbox{
+  Popular numerical implementations of \textbf{LASSO} are known as \textbf{Split Algorithms}.
+  They \textit{split} the problem up into many smaller problems, which can be
+  solved in parallel (independently), then merged back together into a final solution.
+}
+\\
+\section{Alternating Direction Method of Multipliers (ADMM)}
+ADDM begins by combining the cost function $f(x)$ with the constraint $Ax=b$.
+\begin{headered_box}{Lagrangian}
+  \inlineequation{L(x,y)=f(x)+y^T(Ax-b)=f(x)+y^T-y^Tb
+    ~~~~~~~~~~~~~~~~~~~~~~~~}
+\end{headered_box}
+Then, the problem is decomposed into a separable differential equation.
+\begin{headered_box}{Primal Problem}
+  \inlineequation{\textbf{Minimize} f(x)\text{, subject to } Ax=b: A\text{ is } m \times n
+    ~~~~~~~~~~~~~~~~~~~~}
+\end{headered_box}
+\begin{flushleft}
+  The solution $x^\star$ depends on $y$.  By maximizing $y$, the constraint is enforced more strictly.
+  \\
+  \vspace{3mm}
+  \textit{Note: there is a method to the madness of initializing y, but that will
+    not be explored in this section.  For now, just assume that $y$ has been
+    appropriately initialized.}
+\end{flushleft}
+
+\begin{headered_box}{Dual Problem}
+  \inlineequation{\textbf{Maximize }m(y)=L(x^\star(y),y)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+\end{headered_box}
+To maximize $m(y)$, find a point $y^\star$ where all partial derivatives are zero.
+\begin{align}
+  \nabla m=\left({\partial m\over \partial y_1},...,{\partial m\over \partial y_m}\right)
+\end{align}
+
+\begin{center}
+  \myparbox{
+    \begin{center}
+      \setlength{\fboxsep}{2pt}
+      \fbox{
+        \parbox[p]{11cm}{
+          \begin{align}
+            x_{k+1} & =\min L(x,y_k)       \\
+            y_{k+1} & =y_k+s_k(Ax_{k+1}-b)
+          \end{align}
+          \begin{enumerate}
+            \item Minimize $L$ to get $x_{k+1}$ (assume $y_{k}$ is known)
+            \item Move $y$ [roughly] along the solution path by setting
+                  the next $y_{k+1}=y_k+s_k(Ax_{k+1}-b)$.  This is a
+                  'step' ($s_k$ is the step size) in the trajectory of the
+                  maximum gradient (a sensible way to reach the maximium point
+                  in the function).
+          \end{enumerate}
+        }
+      }
+    \end{center}
+  }
+\end{center}
+The idea behind this algorithm is to find the \textit{best} solution to the
+problem.  In this case, \textit{best} is defined to produce an optimal
+combination of finding the solution to the original problem - some linear
+system $Ax=b$ - and minimizing the $\ell_1$ norm!
+\\ \\
+It does this by iteratively
+\textit{minimizing} $f(x)$ (i.e., the $\ell_1$ norm of $\hat{x}$), and \textit{maximizing}
+$y$ (the penalty term coefficient in $y^T(A\hat{x}-b)$).
+\\ \\
+\section{Dual Decomposition}
+Suppose the function to minimize $f(x)$ was \textbf{separable}
+\begin{align*}
+  f(x)=f_1(x_1)+...+f_n(x_n)
+\end{align*}
+Where $x_i$ is a \textit{subvector} of $x$ ($x$ is itself a vector, and
+each $x_i$ is a different piece of $x$).  Together, the subvectors are $x$:
+\begin{align}
+  x=(x_1,...,x_n)
+\end{align}
+\\
+Each of the $n$ individual functions $f(x_i)$ can be evaluated in parallel.
+Every variable can be minized independently of the others (assuming $y$ is known).
+There is a method to the madness of initializing $y$ with an appropriate value,
+however that is not explored in this section.
+\\ \\
+The constraint matrix $A$ is broken up into chunks of $N$ columns to pair
+with each $x_i$.  Finally, the Lagrangian is split up into $N$ pieces to be
+computed in parallel:
+\begin{align}
+  \label{eq:nseparable}
+  f(x)+y^T(Ax-b) & =\sum_1^NL_i(x_i,y)                                     \\
+                 & =\sum_1^N\left[f_i(x_i)+y^TA_ix_i-{1\over N}y^Tb\right]
+\end{align}
+\textit{Note: a separable equation is any differential equation that can be
+  expressed in the form:}
+\begin{align}
+  N(y)={dy\over dx}=M(x)
+\end{align}
+\begin{tabular*}{12cm}[p]{c c}
+  \textbf{Decomposed dual problem}&
+  \parbox[p]{6cm}{
+    \begin{align}
+      \label{eq:decomposed_dual}
+      \boxed{x^{k+1}=argmin~L_i(x_i,y^k)}
+    \end{align}
+  }
+\end{tabular*}
+\\
+\begin{tabular*}{12cm}[p]{c c}
+  \textbf{N dual problems in parallel}&
+  \parbox[p]{6cm}{
+    \begin{align}
+      \label{eq:n_dual}
+      \boxed{x^{k+1}=argmin~L_i(x_i,y^k)}
+    \end{align}
+  }
+\end{tabular*}
+\section{Augmented Lagrangians}
+When \eqref{eq:decomposed_dual} and \eqref{eq:n_dual} are not strictly convex,
+a penalty term $\rho$ can be added as a constraint to guide the solution
+(across iterations) to an optimized result.  A good way to think about the penalty
+terms is as a force that pushes the gradient in a certain direction.
+\begin{formula}{Augmented Lagrangian}
+  \inlineequation{
+  L_\rho(x,y)=f(x)+y^T(Ax-b)+{1\over 2}\rho||Ax-b||^2_2
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+\end{formula}
+\myparbox{
+  \textbf{My Thoughts:}\newline
+  In response to Strang's claim \begin{quotation}
+    \textquotedblleft
+    The Lagrangian $L_\rho$ is not separable even if $f(x)$ is separable!
+    \textquotedblright
+  \end{quotation}
+  Notice how before the penalty term was added, $x$ was broken up into $N$
+  smaller \textit{subvectors} $x_1,...,x_N$ \refeq{eq:nseparable}.  These don't
+  refer to individual elements in $x$, rather $x_i$ is itself a vector with
+  \textit{at least} one entry.  The penalty \textit{cannot} break $x$ up into
+  the same $N$ pieces, because each squared term in in the sum requires the
+  full vector $x$.
+  \begin{align}
+    \label{eq:notnseparable}
+    ||Ax-b||^2_2=\sum\limits_{i=1}^m (a_i^Tx)^2
+  \end{align}
+}
+\end{document}
