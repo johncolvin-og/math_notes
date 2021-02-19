@@ -7,6 +7,12 @@
    },
    "latex-workshop.latex.recipes":[
       {
+         "name": "pdflatexc",
+         "tools": [
+            "pdflatexc"
+         ]
+      },
+      {
          "name": "latexmk 🔃",
          "tools": [
             "latexmk"
@@ -22,12 +28,6 @@
          "name": "latexmk (lualatex)",
          "tools": [
             "lualatexmk"
-         ]
-      },
-      {
-         "name": "pdflatexc",
-         "tools": [
-            "pdflatexc"
          ]
       },
       {
