@@ -1,0 +1,224 @@
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{stackrel}
+\usepackage[colorlinks]{hyperref}
+\usepackage[user,titleref]{zref}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{scrextend}
+
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{multicol}
+
+\usepackage{xcolor}
+\colorlet{linkequation}{red}
+\colorlet{linktheo}{green}
+\usepackage[colorlinks]{hyperref}
+
+\definecolor{propbg}{RGB}{180,220,255}
+\definecolor{factbg}{RGB}{170,232,145}
+\definecolor{formula_header}{RGB}{30,40,210}
+
+\newcounter{theoremc}
+\newcommand{\theoremc}{\refstepcounter{theoremc}{\noindent\textbf{Theorem} \arabic{theoremc}}}
+\newcommand{\myparbox}{\parbox[p]{12cm}}
+\newcommand{\vpush}{\vspace{3mm}}
+\newcommand{\sectionbreak}{\makebox[\linewidth]{\rule{12cm}{0.4pt}}}
+\newcommand{\minmax}[2]{\min\limits_{#1}~\max\limits_{#2}}
+\newcommand{\maxmin}[2]{\max\limits_{#1}~\min\limits_{#2}}
+
+\newenvironment{note}[1][]{
+  \textbf{#1}
+  \begin{flushleft}
+  \begin{addmargin}[2em]{0em}
+}{
+  \end{addmargin}
+  \end{flushleft}
+}
+\newenvironment{proof}
+{
+\noindent
+\begin{addmargin}[2em]{0em}
+\textbf{Proof}
+}
+{
+\end{addmargin}
+}
+
+\newenvironment{headered_note}[1][]{
+\begin{flushleft}
+\begin{addmargin}[2em]{0em}
+\textbf{#1\\}
+\vpush
+\begin{addmargin}[2em]{0em}
+}
+{
+\end{addmargin}
+\end{addmargin}
+\end{flushleft}
+}
+
+\newenvironment{fact}[1][]{
+\begin{flushleft}
+\begin{addmargin}[2em]{0em}
+\textbf{Fact: #1\\}
+\vpush
+\begin{addmargin}[2em]{0em}
+}
+{
+\end{addmargin}
+\end{addmargin}
+\end{flushleft}
+}
+
+\newenvironment{theorem}[1][]{
+\begin{tcolorbox}[colback=green!30,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\theoremc: \space \textbf{#1}
+\begin{addmargin}[2em]{0em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+\newenvironment{formula}[1]{
+\begin{tcolorbox}[colback=white,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\begin{flushleft}
+{\color{formula_header} \textbf{Formula}}
+\textbf{#1}
+\end{flushleft}
+\begin{addmargin}[2em]{0em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+\newenvironment{headered_box}[1]{
+\begin{tcolorbox}[colback=white,%gray background
+colframe=black,% black frame colour
+% 5cm,% Use 5cm total width,
+arc=3mm, auto outer arc,
+]
+\begin{flushleft}
+\textbf{#1}
+\end{flushleft}
+\begin{addmargin}[2em]{0em}
+}
+{
+\end{addmargin}
+\end{tcolorbox}}
+
+\newenvironment{red_rounded_box}{
+\begin{tcolorbox}[enhanced jigsaw,
+    colback=gray!30,%gray background
+    colframe=Maroon,% black frame colour
+    width=5cm,% Use 5cm total width,
+    arc=3mm, auto outer arc,
+    boxrule=5pt,
+    drop shadow={Maroon!50!gray!80}
+  ]
+}
+{ \end{tcolorbox} }
+
+\newcommand*{\reftheo}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linktheo,
+      linkbordercolor=linktheo,
+    }%
+    (\ref{#1})%
+  \endgroup
+}
+
+\newcommand*{\refequation}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=linkequation,
+      linkbordercolor=linkequation,
+    }%
+    \ref{#1}%
+  \endgroup
+}
+
+\newenvironment{axiom}{
+  \begin{tcolorbox}[enhanced jigsaw,
+    colback={blue!20},
+    colframe=Maroon,
+    arc=2mm, auto outer arc,
+    boxrule=3pt,
+    drop shadow={blue!60!gray!60}
+  ]
+}{
+  \end{tcolorbox}
+}
+\newenvironment{proposition}[2]{
+\noindent\fcolorbox{white}{propbg}{%
+  \parbox{\textwidth}{%
+    \textbf{Proposition #1}
+    {#2}
+  }
+}
+}
+
+\newcounter{definitionno}
+\newenvironment{definition}[1][]{
+  \begin{flushleft}
+  \begin{addmargin}[2em]{0em}
+  \text{Definition \refstepcounter{definitionno}\arabic{definitionno}}
+  \textbf{#1}\\
+  \vpush
+  \begin{addmargin}[2em]{0em}
+}{
+  \end{addmargin}
+  \end{addmargin}
+  \end{flushleft}
+}
+
+\newcounter{sectiondefno}
+\newenvironment{sectiondef}[1]{
+  \begin{flushleft}
+  \begin{addmargin}[2em]{0em}
+  \textbf{Definition \thesection.\refstepcounter{sectiondefno}\arabic{sectiondefno}}
+  \textbf{#1}\\
+  \vpush
+  \begin{addmargin}[2em]{0em}
+}{
+  \end{addmargin}
+  \end{addmargin}
+  \end{flushleft}
+}
+
+\makeatletter
+\newcommand*{\inlineequation}[2][]{%
+  \begingroup
+    % Put \refstepcounter at the beginning, because
+    % package `hyperref' sets the anchor here.
+    \refstepcounter{equation}%
+    \ifx\\#1\\%
+    \else
+      \label{#1}%
+    \fi
+    % prevent line breaks inside equation
+    \relpenalty=10000 %
+    \binoppenalty=10000 %
+    \ensuremath{%
+      % \displaystyle % larger fractions, ...
+      #2%
+    }%
+    ~\@eqnnum
+  \endgroup
+}
+\makeatother
+
+\setlength{\fboxsep}{12pt}

@@ -1,0 +1,294 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\input{mystyle.sty}
+
+\title{Convex Optimization 725 Lecture 2: Convexity I: Sets and Functions}
+\date{2021-02-21}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+
+\begin{definition}[Convex Hull]
+  For a given set $C$ (not necessarily convex), the intersection of all convex
+  sets that contain $C$ is known is the \textbf{Convex hull of C}.  In other words,
+  the convex hull is \textit{smallest} set that contains every convex
+  combination of points in $C$.\\
+  \vpush
+  To reiterate, the convex hull contains \textbf{all of C}.  If $C$ is not already
+  convex, this means the \textbf{convex hull} of $C$ must fill in all gaps between
+  points in $C$ that make $C$ non-convex.
+\end{definition}
+\begin{definition}[Closed Set]
+  \begin{itemize}
+    \item a set that contains all of its limit points.
+    \item a set whose complement is \textbf{Open}
+    \item a set that always contains points of convergence (if it is the domain)
+  \end{itemize}
+\end{definition}
+\begin{headered_note}[Examples of Convex Sets]
+  \begin{itemize}
+    \item Trivial ones: empty set, point, line, plane, etc.
+    \item Norm ball: $\{x~:~||x||\leq r\}$ for given norm $||~\dot||$, radius $r$
+          \begin{itemize}
+            \item True because norms satisfy the \textbf{triangle inequality}
+            \item Norms have \textbf{Positive Homogeniety}
+          \end{itemize}
+    \item Hyperplane (mentioned in trivial): $\{x~:~a^Tx=b\}$ for given $a,b$
+    \item Half space: $\{x~:~a^Tx\leq b\}$ for given $A,b$
+    \item Affine space: $\{x~:~Ax=b\}$ for given $A,b$
+  \end{itemize}
+\end{headered_note}
+\pagebreak
+\begin{definition}[Polyhedron]
+  An intersection of two or more \textbf{half spaces}.  The set of all $x$ that
+  satisfy:
+  \begin{align}
+    \{x~:~Ax~\leq b\}
+  \end{align}
+  where the inequality means
+  \begin{align}
+    Ax\leq b \longleftrightarrow a_i^Tx_i\leq b_i~:~\forall i
+  \end{align}
+  The intersection of all half spaces $a_i^Tx\leq b_i$ (each $i$ represents a half space).\\
+  \vpush
+  \textit{Interesting Note}: the set $\{x~:~Ax\leq b,~Cx=d\}$ is also a polyhedron!
+  This is so, because $Cx=d$ can be rewritten as 2 inequalities:
+  \begin{align}
+    \nonumber
+    Cx  & \leq d  \\
+    -Cx & \leq -d
+  \end{align}
+  Thus, by the original definition, the polyhedron is still an \textbf{intersection of halfspaces}.
+\end{definition}
+\begin{definition}[Simplex]
+  A \textbf{polyhedron} whose members $\{x_1,...,x_k\}$ are linearly \textbf{indenpendent}
+\end{definition}
+\begin{theorem}[Separating Hyperplane Theorem]
+  2 disjoint convex sets have a hyperplane between them.\\
+  \vpush
+  This makes sense, because the lack of a hyperplane between them means
+  a hyperplane (or many) intersects one of them in (at least) two places, and
+  another in (at least) one.  Then it would follow that
+  a line (or many) intersects both of them.  Since they don't intersect each other,
+  that line would not be contained in either set.
+\end{theorem}
+\begin{theorem}[Supporting Hyperplane Theorem]
+  A boundary point of a convex set has a \textbf{supporting hyperplane}
+  that is tangent to it (does not touch any other boundary point).\\
+  \vpush
+  Formally, if $C$ is a nonempty convex set, and $x_0\in dom(C)$ then
+  $\exists A$ such that:
+  \begin{align}
+    C\subseteq \{x:a^Tx\leq a^tx_0\}
+  \end{align}
+\end{theorem}
+\pagebreak
+\begin{note}
+  \textbf{Operations preserving concavity}
+  \begin{itemize}
+    \item the \textbf{Intersection} of convex sets is always convex
+    \item \textbf{Scaling and translation:} if $C$ is convex, then
+          \begin{align}
+            aC+b=(ax+b:x\in C)
+          \end{align}
+          is convex for any a, b
+    \item \textbf{Affine images and preimages}: Given an affine function
+          $f(x)=Ax+b$ and convex set $C$, $f(C)$ is convex:
+          \begin{align}
+            f(C)=\{f(x):x\in C\}
+          \end{align}
+          if $D$ is convex then,
+          \begin{align*}
+            f^{-1}(D)=\{x:f(x)\in D\}
+          \end{align*}
+          is convex
+  \end{itemize}
+\end{note}
+\sectionbreak
+\begin{definition}[Linear Matrix Inequality]
+  Symmetric matrix inequality: given two symmetric matrices $A$ and $B$,
+  \begin{align}
+    A\geq B\longleftrightarrow A-B\text{~is positive semidefinite}
+  \end{align}
+\end{definition}
+\begin{headered_note}[Linear Matrix Inequality Solution Set]
+  Given $A_1,...,A_k,B\in S^n$, a linear matrix inequality is of the form
+  $x_1A_1+...+x_kA_k\preceq B$ for $x\in \mathbb{R}^k$, the set $C$ of points
+  $x$ that satisfy the inequality is convex.
+  \begin{align}
+    \nonumber
+    B-\sum_{i=1}^k(tx_i+(1-t)y_i)A~\text{is}~\textbf{positive semi definite} \\
+    v^T\left(B-\sum_{i=1}^k (tx_i+(1-t)y_i)A\right)v\geq 0
+  \end{align}
+  \begin{headered_note}[Alt Proof]
+    let $f:\mathbb{R}^k\rightarrow S^n,f(x)=B-\sum_{i=1}^kx_iA_i$, and note that
+    \begin{align}
+      C=f^{-1}(S^n)
+    \end{align}
+    is the affine preimage of a convex set (the \textbf{PSD cone}).  Remeber, the
+    \textit{domain} of a convex function is a convex set.  Since the inverse
+    function $f^{-1}(S^n)$ has an \textit{image} that is the \textit{domain of $f$},
+    both are convex!
+  \end{headered_note}
+\end{headered_note}
+\begin{fact}
+  \begin{align}
+    f\text{ concave }\Longleftrightarrow -f\text{ convex }
+  \end{align}
+\end{fact}
+\begin{definition}[Affine Transformation]
+  A geometric transformation that preserves lines and parallelism, but not
+  necessarily distances and angles
+\end{definition}
+
+\begin{definition}[Strictly Convex]
+  $f$ is convex, and has greater curvature than a linear function.
+  \begin{align}
+    f(tx+(1-t)y)<tf(x)+(1-t)f(y):\{x~|~x\neq y\},\{t~|~0<t<1\}
+  \end{align}
+\end{definition}
+\begin{definition}[Strongly Convex]
+  $f$ is at least as convex as a quadratic function.  In math terms, $f$ is
+  strongly convex if the following is convex:
+  \begin{align}
+    f-{m\over 2}||x||^2_2:\{m~|~m>0\}
+  \end{align}
+\end{definition}
+\begin{headered_note}[Examples of Convex Functions]
+  \begin{itemize}
+    \item Univariate functions:\\
+          \vpush
+          \begin{tabular}{ c | c | c | c | c }
+            Exponential Fn & convex  & $e^{ax}$  & $\{x|x\in \mathbb{R}\}$      & $\{a|\forall a\}$             \\
+            Power Fn       & convex  & $x^a$     & $\{x|x\in \mathbb{R}_+\}$    & $\{a|a\geq 1 \lor a \leq 0\}$ \\
+            Power Fn       & concave & $x^a$     & $\{x|x\in \mathbb{R}_+\}$    & $\{a|0\leq a\leq 1\}$         \\
+            Log Fn         & concave & $\log(x)$ & $\{x|x\in \mathbb{R}_{++}\}$ &                               \\
+          \end{tabular}
+    \item Affine Fn: $a^Tx+b$ is both convex and concave, as
+          \begin{align}
+            f(tx+(1-t)y)=tf(x)+(1-t)f(y)
+          \end{align}
+    \item Quadratic Fn: ${1\over 2}x^TQx+b^Tx+c$ is convex provided $Q$ is \textbf{positive semidefinite}
+          \begin{itemize}
+            \item This is the sum of two convex functions! $f(x)=PSD(x)+Linear(x)$
+          \end{itemize}
+    \item Least squares loss: $||y-Ax||^2_2$ is always convex (since $A^TA$ is \textbf{PSD} by definition)
+          \begin{itemize}
+            \item This function expands to a quadratic
+                  \begin{align*}
+                    f(x) & =\left(y-Ax\right)^T\left(y-Ax\right) \\
+                         & =y^Ty-y^TAx-(Ax)^Ty+(Ax)^T(Ax)        \\
+                         & =x^TA^TAx-2y^TAx+y^Ty                 \\
+                         & =x^TSx-(2y^TA)x+c
+                  \end{align*}
+          \end{itemize}
+  \end{itemize}
+\end{headered_note}
+\begin{headered_note}[Indicator Function]
+  If $C$ is convex, then its indicator function is convex
+  \begin{align}
+    I_c(x)=\begin{cases}
+      0      & x\in C    \\
+      \infty & x\notin C
+    \end{cases}
+  \end{align}
+\end{headered_note}
+\begin{headered_note}[Support Function]
+  For any set $C$ (convex or not), its support function is convex
+  \begin{align}
+    I_c(x)=\max_{y\in C}x^Ty
+  \end{align}
+\end{headered_note}
+\begin{headered_note}[Max Function]
+  Always convex
+  \begin{align}
+    f(x)=\max\{x_1,...,x_n\}
+  \end{align}
+\end{headered_note}
+\begin{definition}[Epigraph Characterization]
+  The closed set of points above $f(x)$.  In math terms:
+  \begin{align}
+    epi(f)=\{(x,t)\in dom(f)\times \mathbb{R}:f(x)\leq t\}
+  \end{align}
+  $f(x)$ is \textbf{convex} if and only if its \textbf{epigraph} is a \textbf{convex set}.
+\end{definition}
+\begin{headered_note}[Convex Sublevel Sets]
+  if $f(x)$ is convex, then its sublevel sets
+  \begin{align}
+    \{x\in dom(f):f(x)\leq t\}
+  \end{align}
+  are convex $\forall t\in \mathbb{R}$.  The converse is not true.
+\end{headered_note}
+\begin{definition}[First-Order Characterization]
+  if $f(x)$ is \textbf{differentiable}, the $f(x)$ is convex if and only if
+  $dom(f)$ is convex, and
+  \begin{align}
+    f(y)\geq f(x)+\nabla f(x)^T(y-x)
+  \end{align}
+  This is the multivariable version of
+  \begin{align}
+    f(y)\geq f(x)+f^\prime(x)(y-x)
+  \end{align}
+  \textbf{My Thoughts:} \textit{y's accelaration must never be negative with respect to x}.
+\end{definition}
+\pagebreak
+\begin{definition}[Second-Order Characterization]
+  Given a twice differentiable function $f(x)$ with a convex domain $dom(f)$,
+  $f(x)$ is convex if and only if
+  \begin{align}
+    \nabla^2f(x)\succeq 0:\{x|x\in dom(f)\}
+  \end{align}
+  Thus
+  \begin{align}
+    \nabla f(x)=0\Longleftrightarrow x minmizes f
+  \end{align}
+  This means the \textbf{Hessian} matrix of $f(x)$ must be \textbf{PSD}
+\end{definition}
+\begin{theorem}[Jensen's Inequality]
+  If $f(x)$ is convex, and $X$ is a random variable supported on $dom(f)$, then
+  \begin{align}
+    f(E[X])\leq E[f(X)]
+  \end{align}
+\end{theorem}
+\begin{headered_note}[Operations preserving Convexity]
+  \begin{headered_note}[Non-negative Linear Combination]
+    \begin{align}
+      \stackrel{convex}{f_1,...,f_m}\implies \stackrel{convex}{a_1f_1+...+a_mf_m}:\{a_1|a_1\geq 0\}
+    \end{align}
+  \end{headered_note}
+  \begin{headered_note}[Pointwise Maximization]
+    \begin{align}
+      \stackrel{convex}{f_s(s):\{s|s\in S\}}\implies \stackrel{convex}{\max_{s\in S}f_s(x)}
+    \end{align}
+  \end{headered_note}
+  \begin{headered_note}[Partial Minimization]
+    \begin{align}
+      \stackrel{convex}{g(x,y)}\wedge \stackrel{convex}{C}\implies \stackrel{convex}{\min_{y\in C}g(x,y)}
+    \end{align}
+  \end{headered_note}
+\end{headered_note}
+\begin{headered_note}[Example: Max Distance to a Set]
+  \begin{itemize}
+    \item Let $C$ be an arbitrary set (not necessarily convex)
+    \item Let $f(x)=\max_{y\in C}||x-y||$
+    \item $f_y(x)=||x-y||$ is convex in $x$ for any fixed $y$, so by the
+          \textbf{pointwise maximization rule}, $f$ is convex.
+  \end{itemize}
+\end{headered_note}
+\begin{headered_note}[Example: Min Distance to a Set]
+  \begin{itemize}
+    \item Let $C$ be an arbitrary set (not necessarily convex)
+    \item Let $f(x)=\min_{y\in C}||x-y||$
+    \item $g(x,y)=||x-y||$ is convex in $x,y$ jointly, and $C$ is assumed
+          convex, so apply the \textbf{partial minimization rule} to show
+          that $\stackrel{convex}{C}\implies \stackrel{convex}{f(x)}$
+  \end{itemize}
+\end{headered_note}
+\end{document}

@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\input{mystyle.sty}
+\title{Convex Optimization 725 Lecture 1: Introduction}
+\date{2021-02-21}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+\section{Basic Definitions}
+\begin{definition}[Convex Set]
+  A subset of an \textit{affine space} over $\mathbb{R}$ in which the line
+  segment connecting any two points in the set is itself contained in the set .
+\end{definition}
+\begin{definition}[Convex Function]
+  Any function whose domain is a \textbf{convex set}.  This is expressed
+  in mathematical terms as \textbf{Jensen's Inequality}:
+  \begin{align}
+    f(tx_1+(1-t)x_2)\leq tf(x_1)+(1-t)f(x_2)~:~\{0\leq t\leq 1\}
+  \end{align}
+  This says that, given any two values in the domain $x_1,x_2$ and
+  their corresponding functions $y_1,y_2$, any particular weighted average
+  between $x_1$ and $x_2$ is less than or equal to that same weighted average
+  of $y_1$ and $y_2$.\\
+  \vpush
+  \textbf{My Thoughts:}
+  \begin{itemize}
+    \item annoyingly absent from this definition is the assumption that the
+          function is NON-NEGATIVE
+    \item What would happen if you took a parabola (convex) and shifted it
+          vertically down so that it's minimum was negative?  Jensen's
+          inequality wouldn't hold true!
+    \item It seems like generally speaking ${d^2f(x)\over dx^2}>0~:~\forall x$.
+    \item Every \textbf{real valued linear transformation} is convex, since by
+          definition, \textit{linear} functions are distributive:
+    \begin{align}
+      f(a+b)=f(a)+f(b)\leq f(a)+f(b)
+    \end{align}
+          However, this is not \textbf{strictly convex} (see lecture 2 notes).
+  \end{itemize}
+  \textbf{Epiphany:}
+  \begin{itemize}
+    \item All this says, is that the chord from $\{x_1, f(x_1)\}$ to $\{x_2, f(x_2)\}$
+    will always be entirely \textbf{above the curve} $f(x)$.  The chord represents
+    all \textit{weighted averages} of $f(x_1)$ and $f(x_2)$, and the curve represents
+    the solution path from $f(x_1)$ to $f(x_2)$.  The chord is always greater than or equal
+    to the solution path $\forall x \in dom f$.
+  \end{itemize}
+  The domain of a \textbf{convex function} is an \textbf{intersection of convex sets}.
+\end{definition}
+\begin{note}
+  Convex problems only have one minima (i.e., a \textit{minimum}).
+  In other words, there are no local minima, only the global.\newline
+  \\
+  It follows that given a convex function $f(x)$, if it can be proven that
+  $f(x):x\in D$ is a minimum in ONE direction, it must be the minimum in all
+  directions (global minimum).\\
+\end{note}
+\section{Convex Optimization Problems}
+\begin{headered_box}{Optimization Problem}
+  \begin{tabular}{ c c }
+    $\stackrel[x\in D]{\min}{}$ & $f(x)$                     \\
+    % \cmidrule{1-2}
+    subject to                  & $g_i(x)\leq 0,~~i=1,...,m$ \\
+                                & $h_j(x)=0,~~j=1,...,m$
+  \end{tabular}\\
+  \begin{align}
+    D      & \triangleq dom(f)\bigcap\left(\bigcap_{i=1}^m dom(g_i)\right)\bigcap \left(\bigcap_{j=1}^p dom(h_j)\right) \\
+    h_j(x) & =a^Tx+b_j,~~j=1,...,p
+  \end{align}\\
+  \begin{itemize}
+    \item $D$ is the common domain of all functions
+    \item $f$ is convex
+    \item $g_i,i=1,...,m$ is convex
+    \item $h_i,i=1,...,m$ is affine
+  \end{itemize}
+\end{headered_box}
+\begin{flushleft}
+  \textbf{Random Notes}\\
+  \begin{itemize}
+    \item $f(x)=Log(x)$ is \textbf{concave}
+    \item $f(x)=-Log(x)$ is \textbf{convex}
+  \end{itemize}
+\end{flushleft}
+\end{document}
