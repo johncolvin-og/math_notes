@@ -73,5 +73,7 @@
             "%DOC%.tex"
          ]
       }
-   ]
+   ],
+   "editor.glyphMargin": false,
+   "editor.folding": false
 }
