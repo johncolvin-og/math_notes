@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\input{mystyle.sty}
+\title{Convex Optimization: Basics}
+\date{2021-03-02}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+\begin{headered_note}[Proof that Disc/Sphere is Convex]
+  \begin{align*}
+    ||x||=\sqrt{x_1^2+x_2^2}\\
+    ||x||\leq 1\text{, and }||y||\leq 1\text{, and }\alpha \in [0,1]\\
+    \implies ||\alpha x+(1-\alpha)y||\leq \alpha ||x||+(1-\alpha)||y||\leq 1
+  \end{align*}
+\end{headered_note}
+\end{document}
