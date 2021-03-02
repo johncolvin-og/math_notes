@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\input{mystyle.sty}
+\title{Convex Optimization Rockafeller Ch 1: Introduction}
+\date{2021-02-26}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+\section{Basic Definitions}
+\begin{definition}[Least-Squares Problems]
+  A least squares problem is an optimziation with no constraints (i.e., $m=0$)
+  and an \textbf{objective} which is a sum of squares of terms of the form $a_i^Tx-b_i$
+  \begin{align}
+    \min f_0(x)=||Ax-b||_2^2=\sum_{i=1}^k(a_i^Tx-b_i)^2
+  \end{align}
+  Reduces to solving a set of linear equations
+  \begin{align}
+    (A^TA)x=A^Tb
+  \end{align}
+  \begin{itemize}
+    \item Known algorithms can solve least squares in time $n^2k$ ($k$ is a known constant)
+    \item Desktop computer can solve a sparse least-squares problem with tens of thousands of variables,
+          and hundreds of thousands of terms, in $\approx 1$ minute.
+  \end{itemize}
+  \begin{headered_note}[Variations]
+    \textbf{Weighted Least Squares}
+    \begin{align}
+      \min \sum_{i=1}^k w_i(a_i^Tx-b_i)^2
+    \end{align}
+    \textit{My thoughts}: presumably $\sum_{i=1}^k w_i=1$\\
+    \vpush
+    \textbf{Regularization}
+    \begin{align}
+      \sum_{i=1}^k(a_i^Tx-b_i)^2+\rho \sum_{i=1}^px_i^2,~\rho>0
+    \end{align}
+  \end{headered_note}
+\end{definition}
+\begin{definition}[Linear Programming]
+  The objective and all contraint functions are linear
+  \begin{align}
+    \min c^Tx \text{ subject to }a_i^Tx\leq b_i,~i=1,...,m
+  \end{align}
+  The vectors $c,a_1,...,a_m\in R^n$ and scalars $b_1,...,b_m\in R$ are
+  \textbf{problem parameters} that specify the object and contstraint functions.
+  \begin{itemize}
+    \item No simple analytical formula for the solution of a linear program
+          (unlike least squares problems)
+    \item \textbf{Dantzig's Simplex Method} is a good algo
+    \item More recently, \textbf{Interior point methods} have emerged as promising strategies
+  \end{itemize}
+\end{definition}
+\begin{definition}[Chebychev Approximation Problem]
+  Goal: find $x$ that produces the smallest absolute value of any $a_i^Tx-b_i$.
+  $x\in R^n$ is the variable, and $a_1,...,a_k\in R^n,b_1,...,b_k\in R$ are
+  parameters that specify the problem instance.  Note resemblence to \textbf{Least Squares}.
+  \begin{align}
+    \min~\max_{i=1,...,k}|a_i^Tx-b_i|
+  \end{align}
+  \vpush
+  Reduces to the following (variables $x\in R^n,t\in R$)
+  \begin{align}
+     & \min t                                            \\
+    \nonumber
+     & \text{subject to } & a_i^Tx-t\leq b_i,i=1,...,k   \\
+    \nonumber
+     & & -a_i^Tx-t\leq -b_i,i=1,...,k
+  \end{align}
+\end{definition}
+\begin{definition}[Convex Optimization]
+  A convex optimization problem is one of the form
+  \begin{align}
+     & \min f_0(x)                                  \\
+    \nonumber
+     & \text{ subject to }f_i(x)\leq b_i,~i=1,...,m
+  \end{align}
+\end{definition}
+\end{document}
