@@ -1,0 +1,179 @@
+\documentclass{article}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{stackrel}
+\usepackage[dvipsnames,definecolor]{xcolor}
+\input{mystyle.sty}
+
+\title{Convex Optimization 725 Lecture 3: Convexity II: Optimization Basics}
+\date{2021-02-22}
+\author{John Colvin}
+
+\begin{document}
+\maketitle
+
+\begin{theorem}[First-Order Characterization]
+  If $f$ is differentiable, then $f$ is convex if and only if $dom(f)$ is convex, and
+  \begin{align}
+    f(y)\geq f(x)+\nabla f(x)^T(y-x):\{\forall x,y\in dom(f)\}
+  \end{align}
+\end{theorem}
+\begin{theorem}[Second-Order Characterization]
+  If $f$ is twice differentiable, $f$ is convex if and only if $dom(f)$ is convex, and
+  \begin{align}
+    \nabla^2f(x)\succeq 0:\{\forall x\in dom(f)\}
+  \end{align}
+\end{theorem}
+\begin{definition}[Affine Composition]
+  \begin{align}
+    \stackrel{convex}{f}\implies \stackrel{convex}{g(x)=f(Ax+b)}
+  \end{align}
+\end{definition}
+\begin{definition}[General Composition]
+  Suppose
+  \begin{align}
+    f=h\circ g,~g:\mathbb{R}^n\rightarrow \mathbb{R}
+  \end{align}
+  Then\\
+  \vpush
+  \begin{itemize}
+    \item $f$ is convex if $h$ is convex and nondecreasing, $g$ is convex
+    \item $f$ is convex if $h$ is convex and nonincreasing, $g$ is concave
+    \item $f$ is concave if $h$ is concave and nondecreasing, $g$ is concave
+    \item $f$ is concave if $h$ is concave and nonincreasing, $g$ is convex
+  \end{itemize}
+  Think chain rule:
+  \begin{align}
+    f^{\prime\prime}(x)=h^{\prime\prime}(g(x))g^\prime(x)^2+h^\prime(g(x))g^{\prime\prime}(x)
+  \end{align}
+  % \begin{tabular}{ c c c }
+  %   $f$    & $g$                      & $h$\\
+  %   \cmidrule{1-3}
+  %   convex if: & convex and nondecreasing & convex\\
+  %   convex if: & convex and nonincreasing & concave\\
+  %   concave if: & concave and nondecreasing & concave\\
+  %   concave if: & concave and nonincreasing & convex
+  % \end{tabular}
+\end{definition}
+\begin{headered_note}[Example: Log-Sum-Exp Function]
+  Proove the log-sum-exp function $g(x)$ is convex.
+  \begin{align}
+    g(x)=\log \left(\sum_{i=i}^ke^{a_i^Tx+b_i}\right)
+  \end{align}
+  By the \textbf{Affine Composition Rule},
+  \begin{align}
+    \stackrel{convex}{f(x)} & \implies \stackrel{convex}{g(x)=f(Ax+b)} \\
+  \end{align}
+  Replace the $Ax+b$ with $x$ in $f(x)$ to make the proof simpler (the
+  simplified $f(x)$'s convexity implies $f(Ax+b)$ convexity)
+  \begin{align}
+    f(x) & =\log \left(\sum_{i=1}^k e^{x_i}\right)
+  \end{align}
+  If $f(x)$ is convex, $g(x)$ must be convex.  Use the \textbf{Second Order Characterization}:
+  \begin{align}
+    \nabla_if(x)={e^{x_i}\over \sum_{\ell=1}^n e^{x_i}} \\
+    \nabla_i^2f(x)={e^{x_i}\over \sum_{\ell=1}^n e^{x_i}}\{i=j\}-{e^{x_i}e^{x_j}\over \left(\sum_{\ell=1}^ne^{x_i}\right)^2}
+  \end{align}
+  Abstract out the sum to simplify the expression and easily demonstrate convexity
+  \begin{align}
+    z_i          & ={e^{x_i}\over \left(\sum_{\ell=1}^ne^{x_i}\right)} \\
+    \nabla^2f(x) & =diag(z)-zz^T
+  \end{align}
+  Since $z$ is diagonally dominant, it is \textbf{Positive Semidefinite}, which means
+  \begin{align}
+    \nabla^2f(x)\geq 0\implies \stackrel{convex}{f(x)}\implies \stackrel{convex}{g(x)}
+  \end{align}
+\end{headered_note}
+\begin{headered_note}[Example: Support Vector Machine]
+  \begin{align}
+     & \min_{\beta,\beta_0,\xi} & {1\over 2}||\beta||_2^2+C\sum_{i=1}^n\xi_i     \\
+    \nonumber
+     & \text{Subject to }       & \xi_i\geq 0,i=1,...,n                          \\
+    \nonumber
+     &                          & y_i(x_i^T\beta +\beta_0)\geq 1-\xi_i,i=1,...,n
+  \end{align}
+\end{headered_note}
+\begin{headered_note}[Rewriting Constraints]
+  All represent the same optimization problem.
+  \begin{align*}
+     & 1. & \min_x             & f(x)                   \\
+     &    & \text{subject to } & g_i(x)\leq 0,i=1,...,m \\
+     & 2. &                    & Ax=b                   \\
+     & 3. & \min_x             & f(x)+I_C(x)
+  \end{align*}
+  Where $I_C(x)$ is the \textbf{indicator function} for $x\in dom f$.
+\end{headered_note}
+\begin{theorem}[First Order Optimality Condition]
+  For a \textbf{convex problem} \refeq{eq:firstordopt}, and a
+  \textbf{differentiable} $f$, a feasible point $x$
+  is optimal if and only if \refeq{eq:firstordoptdiff} is true.
+  \begin{align}
+    \label{eq:firstordopt}
+    &\min_x f(x)&x\in C\\
+    \label{eq:firstordoptdiff}
+    &\nabla f(x)^T(y-x)\geq 0&\forall y\in C
+  \end{align}
+  \begin{headered_note}[Implications]
+    All feasible directions from $x$ are aligned with gradient $\nabla f(x)$ 
+  \end{headered_note}
+  \begin{headered_note}[Important special case:]
+    If $C=\mathbb{R}^n$ (unconstrained optimization), then optimality condition
+    reduces to familiar $\nabla f(x)=0$
+  \end{headered_note}
+\end{theorem}
+\begin{headered_note}[Example: Quadratic Minimization]
+  Consider minimizing the quadratic function
+  \begin{align}
+    f(x)={1\over2}x^TQx+b^Tx+c
+  \end{align}
+  where $Q\succeq0$.  The first-order condition says that solution satisfies
+  \begin{align}
+    \nabla f(x)=Qx+b=0
+  \end{align}
+  \begin{headered_note}[Cases:]
+    \begin{itemize}
+      \item if $Q\succ0$ then there is a unique solution $x=Q^{-1}b$
+      \item if $Q$ is singular and $b\notin col(Q)$ then there is no solution
+        (i.e., $\min_xf(x)=-\infty)$
+      \item if $Q$ is singular and $b\in col(Q)$ then there are infinitely many solutions
+        \begin{align}
+          x=Q^+b+x,~~x\in \text{null}(Q)
+        \end{align}
+    \end{itemize}
+  \end{headered_note}
+\end{headered_note}
+\begin{headered_note}[Example: Equality Constrained Minimization]
+  Consider the equality constrained convex problem:
+  \begin{align}
+    \min_x f(x) \text{ subject to }Ax=b
+  \end{align}
+  with differentiable $f$.  Prove the \textbf{Lagrange Multiplier} optimality condition
+  \begin{align}
+    \nabla f(x)+A^Tu=0\text{ for some }u
+  \end{align}
+  According to \textbf{First-Order Optimality}, solution $x$ satisfies $Ax=b$ and
+  \begin{align}
+    \nabla f(x)^T(y-x)\geq 0~~\{\forall y | Ay=b\}
+  \end{align}
+\end{headered_note}
+\begin{headered_note}[Transformations and change of variables]
+  If h: $\mathbb{R}\rightarrow \mathbb{R}$ is a \textbf{monotone increasing transformation}, then
+  \begin{align}
+    \min_x f(x)\text{ subject to }x\in C\\
+    \Longleftrightarrow \min_x h(f(x))\text{ subject to }x\in C
+  \end{align}
+  Similarly, inequality or equality constraints can be transformed and yield
+  equivalent optimization problems.  Can use this to reveal \textquoteleft hidden convexity\textquoteright of a problem.
+  \\
+  \vpush
+  If $\phi:\mathbb{R}^n\rightarrow \mathbb{R}^m$ is one-to-one, and its image convers feasible set $C$,
+  then we can change variables in an optimization problem:
+  \begin{align}
+    \min_x f(x)\text{ subject to }x\in C\\
+    \Longleftrightarrow min_x f(\phi (y))\text{ subject to }\phi(y)\in C
+  \end{align}
+\end{headered_note}
+\end{document}
